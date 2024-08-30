@@ -1,0 +1,14 @@
+secrets:
+  FLASK_SECRET_KEY:
+    file: ../secrets/flask_secret_key.txt
+
+services:
+  devcontainer:
+    build:
+      args:
+        IMAGE_NAME: ubuntu
+        IMAGE_TAG: 24.04
+      context: /Users/mattdies/Desktop/dev/football-pool
+      dockerfile: ./.devcontainer/devcontainer.dockerfile
+    volumes:
+      - /Users/mattdies/Desktop/dev/football-pool:/workspace
