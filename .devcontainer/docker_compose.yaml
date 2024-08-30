@@ -1,5 +1,5 @@
 secrets:
-  FLASK_SECRET_KEY:
+  flask_secret_key:
     file: ../secrets/flask_secret_key.txt
 
 services:
@@ -12,3 +12,5 @@ services:
       dockerfile: ./.devcontainer/devcontainer.dockerfile
     volumes:
       - /Users/mattdies/Desktop/dev/football-pool:/workspace
+    secrets:
+      - flask_secret_key
