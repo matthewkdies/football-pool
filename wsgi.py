@@ -1,6 +1,7 @@
-from main import app_factory
-from config import project_name
 import os
+
+from config import project_name
+from main import app_factory
 
 try:
     config_obj_path = os.environ['FLASK_CONFIG_DEFAULT']
@@ -11,7 +12,6 @@ except KeyError:
     exit()
 
 app = app_factory(config_obj_path, project_name)
-
 
 if __name__ == '__main__':
     _debug = app.config.get('DEBUG', False)
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     from extensions import io
 
     io.run(app, **kwargs)
-    
+
