@@ -26,7 +26,7 @@ migrate = Migrate(db=db)
 admin = Admin()
 ma = Marshmallow()
 security = Security()
-
+io = SocketIO()
 
 def security_init_kwargs():
     """
