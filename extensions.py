@@ -33,7 +33,7 @@ def security_init_kwargs():
     **kwargs arguments passed down during security extension initialization by
     "empty" package.
     """
-    from auth.models import User, Role
+    from apps.auth.models import User, Role
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     return dict(datastore=user_datastore)
