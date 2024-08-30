@@ -3,7 +3,7 @@ import os
 from datetime import timedelta
 from typing import Dict, List
 
-project_name = "footbal-pool"
+project_name = "football-pool"
 SQLALCHEMY_DATABASE_URI_TMPL = "postgresql+psycopg2://%(user)s:%(passwd)s@%(host)s/%(name)s"
 
 
