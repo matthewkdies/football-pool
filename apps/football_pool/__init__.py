@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from flask import Flask
 from flask_admin import Admin
 from flask_marshmallow import Marshmallow
@@ -7,7 +9,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config
-from .views import app as football_pool_bp
+from .views import app_blueprint
 
 db = SQLAlchemy()
 migrate = Migrate(db=db)
@@ -17,9 +19,14 @@ security = Security()
 io = SocketIO()
 
 
-def create_app(config_filename=None):
+def create_app(config_filename: Path = None):
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Register blueprints
+    app.register_blueprint(app_blueprint)
+
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     admin.init_app(app)
@@ -29,8 +36,5 @@ def create_app(config_filename=None):
 
     if config_filename:
         app.config.from_pyfile(config_filename)
-
-    # Register blueprints
-    app.register_blueprint(football_pool_bp)
 
     return app
