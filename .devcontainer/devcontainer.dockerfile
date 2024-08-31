@@ -14,9 +14,7 @@ ENV FLASK_DEBUG=1
 ENV FLASK_ENV=development
 ENV FLASK_CONFIG_DEFAULT=Dev
 ENV VIRTUAL_ENV=${HOME}/venv
-ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
-
-# SHELL [ "/usr/bin/bash", "-e" ]
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}:${PROJECT_DIR}
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
