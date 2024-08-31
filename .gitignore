@@ -4,3 +4,4 @@ __pycache__
 .vscode
 secrets
 node_modules
+pgdata
