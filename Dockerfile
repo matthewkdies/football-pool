@@ -10,7 +10,7 @@ ENV PROJECT_DIR ${HOME}/code
 ENV PYTHONUNBUFFERED 1
 
 # module holding our project instance
-ENV FLASK_APP=wsgi.py
+ENV FLASK_APP=apps.football_pool
 ENV FLASK_DEBUG=1
 ENV FLASK_ENV=development
 # which configuration class to use; see config.py
