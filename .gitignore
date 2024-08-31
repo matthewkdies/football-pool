@@ -6,3 +6,4 @@ secrets
 node_modules
 pgdata
 .ruff_cache
+.DS_Store
