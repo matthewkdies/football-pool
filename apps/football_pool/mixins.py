@@ -12,7 +12,7 @@ class HttpMixin:
         Add jinja2 extensions here
         """
         # 'do' extension. see: http://jinja.pocoo.org/docs/extensions/#expression-statement  # noqa
-        self.jinja_env.add_extension('jinja2.ext.do')
+        self.jinja_env.add_extension("jinja2.ext.do")
 
     def configure_error_handlers(self):
         from flask import render_template

@@ -1,12 +1,10 @@
 # coding:utf-8
 
+import builtins as __builtin__
 import os
 import sys
+
 from empty import Empty
-try:
-    import __builtin__
-except ImportError:
-    import builtins as __builtin__
 
 # allows you to copy json snippets directly into python
 __builtin__.true = True
@@ -21,25 +19,25 @@ base_cls_list = [Empty]
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(PROJECT_PATH, "apps"))
 
-basestring = getattr(__builtins__, 'basestring', str)
+basestring = getattr(__builtins__, "basestring", str)
 
 
 # dynamically create our class
-App = type('App', tuple(base_cls_list), {})
+App = type("App", tuple(base_cls_list), {})
 
 
 def config_str_to_obj(cfg):
     if isinstance(cfg, basestring):
-        module = __import__('config', fromlist=[cfg])
+        module = __import__("config", fromlist=[cfg])
         return getattr(module, cfg)
     return cfg
 
 
 def app_factory(config, app_name, blueprints=None):
-    from commands import new_app, test_cmd
+    from .commands import new_app, test_cmd
 
     # you can use Empty directly if you wish
-    app = App(app_name, template_folder=os.path.join(PROJECT_PATH, 'templates'))
+    app = App(app_name, template_folder=os.path.join(PROJECT_PATH, "templates"))
     config = config_str_to_obj(config)
 
     app.cli.add_command(new_app)
@@ -53,6 +51,7 @@ def app_factory(config, app_name, blueprints=None):
 
 
 def heroku():
-    from config import Config, project_name
+    from apps.football_pool.config import PROJECT_NAME, Config
+
     # setup app through APP_CONFIG envvar
-    return app_factory(Config, project_name)
+    return app_factory(Config, PROJECT_NAME)
