@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, url_for
+
+from .models import Owner, Team
 
 __APPPATH = Path(__file__).parent
 
@@ -14,4 +16,5 @@ app_blueprint = Blueprint(
 
 @app_blueprint.route("/")
 def index():
-    return render_template("index.html")
+    teams: list[Team] = Team.query.all()
+    return render_template("index.html", teams=teams)
