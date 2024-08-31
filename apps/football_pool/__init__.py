@@ -6,12 +6,11 @@ from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_security import Security
 from flask_socketio import SocketIO
-from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config
+from .models import db
 from .views import app_blueprint
 
-db = SQLAlchemy()
 migrate = Migrate(db=db)
 admin = Admin()
 ma = Marshmallow()
