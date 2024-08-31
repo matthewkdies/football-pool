@@ -19,18 +19,25 @@ ENV PATH=${VIRTUAL_ENV}/bin:${PATH}:${PROJECT_DIR}
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     <<EOF
+# install all OS dependencies
 apt-get update
 apt-get install -y \
-sudo \
-vim \
+build-essential \
 curl \
 git \
-build-essential \
+libpq-dev \
+nodejs \
+npm \
 python3.12 \
 python3.12-dev \
 python3.12-venv \
-libpq-dev
+sudo \
+vim
+
+# add user to sudoers list
 echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
+
+# create virtual environment
 python3.12 -m venv ${VIRTUAL_ENV}
 EOF
 
@@ -40,9 +47,14 @@ COPY ./requirements.txt ${PROJECT_DIR}/requirements.txt
 
 RUN --mount=type=cache,target=${HOME}/.cache/pip,uid=1000,gid=1000 \
 <<EOF
+# set permissions for workdir and venv
 sudo chown --recursive 1000 /workspace
 sudo chown --recursive 1000 ${VIRTUAL_ENV}
+
+# install requirements.txt
 ${VIRTUAL_ENV}/bin/python -m pip install --cache-dir ${HOME}/.cache/pip -r ${PROJECT_DIR}/requirements.txt
+
+# add usability aliases
 alias python='python3.12'
 alias python3='python3.12'
 EOF
