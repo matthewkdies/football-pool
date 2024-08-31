@@ -5,9 +5,13 @@
 	"service": "devcontainer",
 	"name": "${localWorkspaceFolderBasename}",
 	"workspaceFolder": "/workspace",
+	"onCreateCommand": "pipx install ruff",
 	"customizations": {
 		"vscode": {
 			"settings": {
+				"[python]": {
+					"editor.defaultFormatter": "charliermarsh.ruff",
+				},
 				"editor.codeActionsOnSave": {
 					"source.organizeImports": "always"
 				},
@@ -25,7 +29,9 @@
 					"**/Thumbs.db": true,
 					"**/__pycache__": true,
 					"**/.pytest_cache": true,
-					"**/mypy_cache": true
+					"**/mypy_cache": true,
+					"**/pgdata": true,
+					"**/.ruff_cache": true
 				},
 				"files.trimTrailingWhitespace": true,
 				"python.formatting.provider": "ruff",

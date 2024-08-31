@@ -28,6 +28,7 @@ git \
 libpq-dev \
 nodejs \
 npm \
+pipx \
 python3.12 \
 python3.12-dev \
 python3.12-venv \
@@ -55,6 +56,7 @@ sudo chown --recursive 1000 ${VIRTUAL_ENV}
 
 # install requirements.txt
 ${VIRTUAL_ENV}/bin/python -m pip install --cache-dir ${HOME}/.cache/pip -r ${PROJECT_DIR}/requirements.txt
+pipx install ruff  # TODO: not working currently, pipx probably not properly installed
 
 # add usability aliases
 alias python='python3.12'
