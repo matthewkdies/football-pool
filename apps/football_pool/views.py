@@ -1,12 +1,17 @@
-# keep this file even if you don't need traditional views
-# as it holds the blueprint app instance
 from pathlib import Path
 
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-app = Blueprint("football_pool", __name__, template_folder=Path(__file__).parent / "templates")
+__APPPATH = Path(__file__).parent
+
+app_blueprint = Blueprint(
+    "football_pool",
+    __name__,
+    static_folder=__APPPATH / "static",
+    template_folder=__APPPATH / "templates",
+)
 
 
-@app.route("/")
-def hello_world():
+@app_blueprint.route("/")
+def index():
     return render_template("index.html")
