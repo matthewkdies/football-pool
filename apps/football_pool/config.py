@@ -25,15 +25,15 @@ class Config(object):
     # use server x-sendfile?
     USE_X_SENDFILE = False
 
-    # should be the hostname of your project
-    HOST = os.getenv("HOST", "")  # create an alias in /etc/hosts for dev
-    # useful for development/testing mode
-    # necessary if non-standard port is being used
-    HOST_PORT = os.getenv("HOST_PORT", "")
-    # we need to append the host port to the server_name if it is non-standard
-    SERVER_NAME_EXTRA = len(HOST_PORT) and "" or (":" + HOST_PORT)
-    # SERVER_NAME contains the hostname and port (if non-default)
-    SERVER_NAME = HOST + SERVER_NAME_EXTRA
+    # # should be the hostname of your project
+    # HOST = os.getenv("HOST", "")  # create an alias in /etc/hosts for dev
+    # # useful for development/testing mode
+    # # necessary if non-standard port is being used
+    # HOST_PORT = os.getenv("HOST_PORT", "")
+    # # we need to append the host port to the server_name if it is non-standard
+    # SERVER_NAME_EXTRA = len(HOST_PORT) and "" or (":" + HOST_PORT)
+    # # SERVER_NAME contains the hostname and port (if non-default)
+    # SERVER_NAME = HOST + SERVER_NAME_EXTRA
 
     # use to set werkzeug / socketio options, if needed
     # SERVER_OPTIONS = {}
@@ -87,29 +87,29 @@ class Config(object):
 
     # these are the modules preemptively
     # loaded for each app
-    LOAD_MODULES_EXTENSIONS = ["views", "models", "admin", "api", "schemas"]
+    # LOAD_MODULES_EXTENSIONS = ["views", "models", "admin"]
 
     # add below the module path of extensions
     # you wish to load
-    EXTENSIONS = [
-        ".extensions.db",
-        ".extensions.migrate",
-        ".extensions.security",
-        ".extensions.admin",
-        ".extensions.ma",
-        ".extensions.io",
-    ]
+    # EXTENSIONS = [
+    #     ".extensions.db",
+    #     ".extensions.migrate",
+    #     ".extensions.security",
+    #     ".extensions.admin",
+    #     ".extensions.ma",
+    #     ".extensions.io",
+    # ]
 
     # see example/ for reference
     # ex: BLUEPRINTS = ['blog']  # where `blog` is a Blueprint instance
     # ex: BLUEPRINTS = [('blog', {'url_prefix': '/myblog'})]  # where `blog` is a Blueprint instance
-    BLUEPRINTS: List = []
+    # BLUEPRINTS: List = []
 
 
 # config class for development environment
 class Dev(Config):
     MAIL_DEBUG = True
-    EXTENSIONS = Config.EXTENSIONS + ["extensions.toolbar"]
+    # EXTENSIONS = Config.EXTENSIONS + ["extensions.toolbar"]
     # uses sqlite by default
     SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/%s.db" % Config.DB_NAME
 
