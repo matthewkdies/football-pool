@@ -1,0 +1,1 @@
+flask --app apps.football_pool run
