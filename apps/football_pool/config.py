@@ -25,15 +25,15 @@ class Config(object):
     # use server x-sendfile?
     USE_X_SENDFILE = False
 
-    # # should be the hostname of your project
-    # HOST = os.getenv("HOST", "")  # create an alias in /etc/hosts for dev
-    # # useful for development/testing mode
-    # # necessary if non-standard port is being used
-    # HOST_PORT = os.getenv("HOST_PORT", "")
-    # # we need to append the host port to the server_name if it is non-standard
-    # SERVER_NAME_EXTRA = len(HOST_PORT) and "" or (":" + HOST_PORT)
-    # # SERVER_NAME contains the hostname and port (if non-default)
-    # SERVER_NAME = HOST + SERVER_NAME_EXTRA
+    # should be the hostname of your project
+    HOST = os.getenv("HOST", "127.0.0.1")  # Default to localhost if HOST is not set
+    # useful for development/testing mode
+    # necessary if non-standard port is being used
+    HOST_PORT = os.getenv("HOST_PORT", "5000")  # Default to port 5000 if HOST_PORT is not set
+    # we need to append the host port to the server_name if it is non-standard
+    SERVER_NAME_EXTRA = len(HOST_PORT) and "" or (":" + HOST_PORT)
+    # SERVER_NAME contains the hostname and port (if non-default)
+    SERVER_NAME = HOST + SERVER_NAME_EXTRA
 
     # use to set werkzeug / socketio options, if needed
     # SERVER_OPTIONS = {}
