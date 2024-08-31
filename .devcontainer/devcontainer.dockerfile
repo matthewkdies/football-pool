@@ -45,6 +45,8 @@ USER ${USER}
 
 COPY ./requirements.txt ${PROJECT_DIR}/requirements.txt
 
+WORKDIR ${PROJECT_DIR}
+
 RUN --mount=type=cache,target=${HOME}/.cache/pip,uid=1000,gid=1000 \
 <<EOF
 # set permissions for workdir and venv
@@ -57,8 +59,10 @@ ${VIRTUAL_ENV}/bin/python -m pip install --cache-dir ${HOME}/.cache/pip -r ${PRO
 # add usability aliases
 alias python='python3.12'
 alias python3='python3.12'
-EOF
 
-WORKDIR ${PROJECT_DIR}
+# install tailwind + daisyui
+npm install -D tailwindcss
+npm install -D daisyui@latest
+EOF
 
 CMD [ "sleep", "infinity" ]
