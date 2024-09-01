@@ -16,5 +16,16 @@ app_blueprint = Blueprint(
 
 @app_blueprint.route("/")
 def index():
+    return render_template("index.html")
+
+
+@app_blueprint.route("/assignments")
+def assignments():
+    owners: list[Owner] = sorted(Owner.query.all(), key=lambda x: x.team.name_str)
+    return render_template("assignments.html", owners=owners)
+
+
+@app_blueprint.route("/test")
+def test():
     teams: list[Team] = Team.query.all()
-    return render_template("index.html", teams=teams)
+    return render_template("test.html", teams=teams)
