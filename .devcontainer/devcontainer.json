@@ -5,7 +5,7 @@
 	"service": "devcontainer",
 	"name": "${localWorkspaceFolderBasename}",
 	"workspaceFolder": "/workspace",
-	"onCreateCommand": "pipx install ruff",
+	"onCreateCommand": "pipx install ruff && npm run build:css",
 	"customizations": {
 		"vscode": {
 			"settings": {
