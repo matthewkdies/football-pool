@@ -18,21 +18,21 @@
         {% for owner in owners %}
             {% set team = owner.team %}
             <tr class="space-x-4">
-                <td align="center">
+                <td align="center" valign="middle">
                     <div class="avatar">
                         <div class="mask mask-squircle h-12 w-12">
                             <img src="{{ team.logo_url }}" alt="{{ team.city }} {{ team.name }} logo" style="max-height: 30px; max-width: 50px; width:auto;">
                         </div>
                     </div>
                 </td>
-                <td>
+                <td valign="middle">
                     <div class="flex items-center gap-3">
                         <div>
                             <div class="font-bold">{{ team.name_str }}</div>
                         </div>
                     </div>
                 </td>
-                <td>
+                <td valign="middle">
                     {{ owner.name_str }}
                 </td>
             </tr>
