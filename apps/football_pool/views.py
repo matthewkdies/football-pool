@@ -25,6 +25,16 @@ def assignments():
     return render_template("assignments.html", owners=owners)
 
 
+@app_blueprint.route("/results")
+def results():
+    return render_template("results.html")
+
+
+@app_blueprint.route("/about")
+def about():
+    return render_template("about.html")
+
+
 @app_blueprint.route("/test")
 def test():
     teams: list[Team] = Team.query.all()
