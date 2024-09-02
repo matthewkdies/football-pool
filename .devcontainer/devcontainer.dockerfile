@@ -65,6 +65,7 @@ alias python3='python3.12'
 # install tailwind + daisyui
 npm install -D tailwindcss
 npm install -D daisyui@latest
+npm install -D @tailwindcss/typography
 EOF
 
 CMD [ "sleep", "infinity" ]
