@@ -17,3 +17,4 @@ flask-socketio
 marshmallow-sqlalchemy
 flask-debugtoolbar
 pydantic
+apscheduler
