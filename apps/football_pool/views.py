@@ -35,6 +35,11 @@ def about():
     return render_template("about.html")
 
 
+@app_blueprint.route("/rules")
+def rules():
+    return render_template("rules.html")
+
+
 @app_blueprint.route("/test")
 def test():
     teams: list[Team] = Team.query.all()
