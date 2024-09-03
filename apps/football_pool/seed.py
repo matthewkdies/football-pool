@@ -206,7 +206,7 @@ with app.app_context():
     COMMANDERS = Team(
         city="Washington",
         name="Commanders",
-        abbreviation="WAS",
+        abbreviation="WSH",
         logo_url=get_logo_url("washington-commanders"),
         conference=Conference.NFC,
         division=Division.EAST,
@@ -363,174 +363,203 @@ with app.app_context():
         first_name="Madison",
         last_name="Dies",
         team=FALCONS,
+        winnings=0,
     )
 
     MIKE = Owner(
         first_name="Mike",
         last_name="Dies",
         team=RAVENS,
+        winnings=0,
     )
 
     JEEP = Owner(
         first_name="Jeep",
         last_name="Dies",
         team=BILLS,
+        winnings=0,
     )
 
     AARON = Owner(
         first_name="Aaron",
         last_name="Smith",
         team=PANTHERS,
+        winnings=0,
     )
 
     THOMAS = Owner(
         first_name="Thomas",
         last_name="Iodice",
         team=BENGALS,
+        winnings=0,
     )
 
     JANET = Owner(
         first_name="Janet",
         last_name="Lippincott",
         team=BROWNS,
+        winnings=0,
     )
 
     KATHY = Owner(
         first_name="Kathy",
         last_name="Dies",
         team=COWBOYS,
+        winnings=0,
     )
 
     JUDI = Owner(
         first_name="Judi",
         last_name="Carlson",
         team=BRONCOS,
+        winnings=0,
     )
 
     CHARLOTTE = Owner(
         first_name="Charlotte",
         last_name="Lippincott",
         team=LIONS,
+        winnings=0,
     )
 
     AIDAN = Owner(
         first_name="Aidan",
         last_name="Grass",
         team=PACKERS,
+        winnings=0,
     )
 
     PAM = Owner(
         first_name="Pam",
         last_name="Smith",
         team=TEXANS,
+        winnings=0,
     )
 
     MISSY = Owner(
         first_name="Missy",
         last_name="Dies",
         team=COLTS,
+        winnings=0,
     )
 
     NATHAN = Owner(
         first_name="Nathan",
         last_name="Smith",
         team=JAGUARS,
+        winnings=0,
     )
 
     MATT = Owner(
         first_name="Matt",
         last_name="IodDiesice",
         team=CHIEFS,
+        winnings=0,
     )
 
     COLIN = Owner(
         first_name="Colin",
         last_name="Lippincott",
         team=CHARGERS,
+        winnings=0,
     )
 
     DENNIS = Owner(
         first_name="Dennis",
         last_name="Smith",
         team=RAMS,
+        winnings=0,
     )
 
     DAVE = Owner(
         first_name="Dave",
         last_name="Hasman",
         team=DOLPHINS,
+        winnings=0,
     )
 
     NATALIA = Owner(
         first_name="Natalia",
         last_name="Carlson",
         team=VIKINGS,
+        winnings=0,
     )
 
     DOUG = Owner(
         first_name="Doug",
         last_name="Carlson",
         team=PATRIOTS,
+        winnings=0,
     )
 
     ASHLEY_D = Owner(
         first_name="Ashley",
         last_name="Dies",
         team=SAINTS,
+        winnings=0,
     )
 
     ANNA = Owner(
         first_name="Anna",
         last_name="Lippincott",
         team=JETS,
+        winnings=0,
     )
 
     JULIA = Owner(
         first_name="Julia",
         last_name="Klein",
         team=RAIDERS,
+        winnings=0,
     )
 
     ALEX = Owner(
         first_name="Alex",
         last_name="Lippincott",
         team=EAGLES,
+        winnings=0,
     )
 
     JANICE = Owner(
         first_name="Janice",
         last_name="Dies",
         team=STEELERS,
+        winnings=0,
     )
 
     LAURYN = Owner(
         first_name="Lauryn",
         last_name="Dies",
         team=FORTYNINERS,
+        winnings=0,
     )
 
     JEREMY = Owner(
         first_name="Jeremy",
         last_name="Carlson",
         team=SEAHAWKS,
+        winnings=0,
     )
 
     ASHLEY_L = Owner(
         first_name="Ashley",
         last_name="Lippincott",
         team=BUCCANEERS,
+        winnings=0,
     )
 
     CHIP = Owner(
         first_name="Chip",
         last_name="Lippincott",
         team=TITANS,
+        winnings=0,
     )
 
     MOIRA = Owner(
         first_name="Moira",
         last_name="Healy",
         team=COMMANDERS,
+        winnings=0,
     )
 
     OWNERS: list[Owner] = [
