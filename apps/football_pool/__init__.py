@@ -43,9 +43,9 @@ def create_app(config_filename: Path = None):
     if config_filename:
         app.config.from_pyfile(config_filename)
 
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        """Stops the scheduler before tearing down the app."""
-        scheduler.shutdown()
+    # @app.teardown_appcontext
+    # def shutdown_session(exception=None):
+    #     """Stops the scheduler before tearing down the app."""
+    #     scheduler.shutdown()
 
     return app
