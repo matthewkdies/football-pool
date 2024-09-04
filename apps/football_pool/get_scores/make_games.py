@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
+from pytz import timezone
 
 from ..models import Team, WinningType
+
+EST = timezone("US/Eastern")
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
@@ -20,6 +25,7 @@ class Game:
     away_team_score: int
     is_active: bool
     espn_url: str
+    gametime: datetime
     display_clock: str | None
     quarter: int | None
 
@@ -40,6 +46,8 @@ class Game:
             away_idx = 1 - home_idx
             home_dict = event["competitions"][0]["competitors"][home_idx]
             away_dict = event["competitions"][0]["competitors"][away_idx]
+            gametime: datetime = datetime.strptime(event["date"], "%Y-%m-%dT%H:%MZ")
+            gametime = gametime.astimezone(EST)
             games.append(
                 Game(
                     home_team=Team.from_abbr(home_dict["team"]["abbreviation"]),
@@ -47,12 +55,31 @@ class Game:
                     away_team=Team.from_abbr(away_dict["team"]["abbreviation"]),
                     away_team_score=int(away_dict["score"]),
                     is_active=is_active,
+                    espn_url=event["links"][0]["href"],
+                    gametime=gametime,
                     display_clock=display_clock,
                     quarter=quarter,
-                    espn_url=event["links"][0]["href"],
                 )
             )
         return games
+
+    @property
+    def date_str(self) -> str:
+        """Gets the start date of the game as a string.
+
+        Returns:
+            str: The start date of the game.
+        """
+        return self.gametime.strftime("%b %-d")
+
+    @property
+    def start_time_str(self) -> str:
+        """Gets the start time of the game as a string.
+
+        Returns:
+            str: The start time of the game.
+        """
+        return self.gametime.strftime("%-I:%M %p")
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
@@ -96,8 +123,9 @@ if __name__ == "__main__":
     with (Path(__file__).parent / "example.json").open("r") as infile:
         query_json = json.load(infile)
 
-    from ...football_pool import create_app
     import time
+
+    from ...football_pool import create_app
 
     app = create_app()
     with app.app_context():

@@ -19,3 +19,4 @@ flask-debugtoolbar
 pydantic
 apscheduler
 requests
+pytz
