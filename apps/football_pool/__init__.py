@@ -11,7 +11,7 @@ from flask_socketio import SocketIO
 
 from .config import Config
 from .models import db
-from .query_espn import write_to_db
+from .get_scores import write_to_db
 from .views import app_blueprint
 
 migrate = Migrate(db=db)
