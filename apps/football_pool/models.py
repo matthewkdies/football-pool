@@ -9,6 +9,8 @@ So the database should be focused around two things:
   2. Storing information for teams, like names, location, abbreviation, etc.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -68,6 +70,18 @@ class Team(db.Model):
     def name_str(self) -> str:
         """Displays the team's name as a string."""
         return f"{self.city} {self.name}"
+
+    @staticmethod
+    def from_abbr(abbr: str) -> Team:
+        """Gets the team with the given abbreviation.
+
+        Args:
+            abbr (str): The abbreviation of the desired team.
+
+        Returns:
+            Team: The Team with the corresponding appreviation.
+        """
+        return Team.query.where(Team.abbreviation == abbr).one()
 
 
 class Owner(db.Model):
