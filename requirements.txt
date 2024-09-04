@@ -18,3 +18,4 @@ marshmallow-sqlalchemy
 flask-debugtoolbar
 pydantic
 apscheduler
+requests
