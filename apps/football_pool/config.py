@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import timedelta
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 from urllib.parse import quote
 
 PROJECT_NAME = "football-pool"
