@@ -2,6 +2,7 @@ from pathlib import Path
 
 from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 
+from .get_scores import get_live_scores
 from .models import Owner, Team
 
 __APPPATH = Path(__file__).parent
@@ -16,7 +17,8 @@ app_blueprint = Blueprint(
 
 @app_blueprint.route("/")
 def index():
-    return render_template("index.html")
+    current_week = get_live_scores()
+    return render_template("index.html", current_week=current_week)
 
 
 @app_blueprint.route("/assignments")

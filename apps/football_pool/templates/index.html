@@ -4,6 +4,39 @@
 
 {% block content %}
 <article class="prose prose-lg max-w-none">
-    <h2 align="center">Live Results</h2>
+    <h2 align="center">Live Results: Week {{ current_week.week }}</h2>
 </article>
+<div class="grid grid-cols-4 gap-4">
+    {% for game in current_week.games %}
+        {% set away_team = game.away_team %}
+        {% set home_team = game.home_team %}
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body flex flex-row justify-between items-center">
+                <!-- Away Team -->
+                <div class="flex flex-col items-center">
+                    <img src="{{ away_team.logo_url }}" alt="{{ away_team.name_str }} Logo" class="w-16 h-16">
+                    <span class="text-xl font-bold">{{ game.away_team_score }}</span>
+                </div>
+                {% if game.is_active %}
+                    <!-- Game Time and Quarter -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-lg font-semibold">{{ game.display_clock }}</span>
+                        <span class="text-sm">Q{{ game.quarter }}</span>
+                    </div>
+                {% else %}
+                    <!-- Start Date and Time -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-lg font-semibold">{{ game.date_str }}</span>
+                        <span class="text-sm">{{ game.start_time_str }} EST</span>
+                    </div>
+                {% endif %}
+                <!-- Home Team -->
+                <div class="flex flex-col items-center">
+                    <img src="{{ home_team.logo_url }}" alt="{{ home_team.name_str }} Logo" class="w-16 h-16">
+                    <span class="text-xl font-bold">{{ game.home_team_score }}</span>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
