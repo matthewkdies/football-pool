@@ -84,6 +84,7 @@ class Team(db.Model):
         return Team.query.where(Team.abbreviation == abbr).one()
 
 
+@dataclass
 class Owner(db.Model):
     """Contains all team owners and their information."""
 
@@ -102,6 +103,7 @@ class Owner(db.Model):
         return f"{self.first_name} {self.last_name}"
 
 
+@dataclass
 class WinningGame(db.Model):
     """Contains all winning games, created via a scheduled job."""
 
