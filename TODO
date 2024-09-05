@@ -6,5 +6,7 @@
 - [ ] Test scheduled job
 - [ ] Create production app
 - [ ] Test production app on Macbook
+- [ ] Review GitHub project permissions
+- [ ] Re-write README, License, and changelog
 - [ ] Scan for vulnerabilities and do security audit
 - [ ] Host app on server
