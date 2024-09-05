@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from flask import Blueprint, current_app, flash, redirect, render_template, url_for
+from flask import Blueprint, render_template
 
 from .get_scores import get_live_scores
 from .models import Owner, Team
