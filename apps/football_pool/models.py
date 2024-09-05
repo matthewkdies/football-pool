@@ -110,8 +110,6 @@ class WinningGame(db.Model):
     __tablename__ = "winning_games"
     id: Mapped[int] = db.Column(db.Integer, unique=True, primary_key=True)
     week: Mapped[int] = db.Column(db.Integer, nullable=False)
-    more_score: Mapped[int] = db.Column(db.Integer, nullable=False)
-    less_or_equal_score: Mapped[int] = db.Column(db.Integer, nullable=False)
     winnings: Mapped[int] = db.Column(db.Integer, nullable=False)
     winning_type: Mapped[WinningType] = db.Column(db.Enum(WinningType), nullable=False)
     team_id: Mapped[int] = db.Column(db.Integer, db.ForeignKey("teams.id"), unique=True)
