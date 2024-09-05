@@ -3,9 +3,30 @@
 {% block title %}Rules{% endblock %}
 
 {% block content %}
-<article class="prose prose-lg max-w-none">
-    <!-- <h2 align="center">Results So Far</h2> -->
-    <h2 align="center">Rules</h2>
-    <p align="center">This where information about the scoring and rules will go.</p>
-</article>
+<div class="p-4">
+    <article class="prose prose-xl max-w-none">
+        <h2 align="center">Rules</h2>
+        <h4 align="center">
+            There are a few ways to win in the football pool.
+            Unfortunately for us, all of us involve Grandma rigging in our favor!
+        </h4>
+        <p align="left">
+            The first week of the season is a "most" week, and the following week is a "least" week.
+            This pattern alternates until the playoffs begin, at which point the most and least points no longer matter.
+        </p>
+        <ol>
+            <li>If your team scores the most points of all teams during a most week, you win <b>$10</b>.</li>
+            <li>If your team scores the least points of all teams during a least week, you win <b>$10</b>.</li>
+            <li>If your team scores exactly 50 points, you win exactly <b>$50</b>.</li>
+            <li>If your team wins a playoff game, you win <b>$10</b>.</li>
+            <li>If your team wins the Super Bowl, you win <b>$25</b>.</li>
+        </ol>
+        <p align="left">
+            If multiple teams share a winning score during a most or least week, all teams sharing the winning score win.
+        </p>
+        <p align="center">
+            To see winners so far this year, check out <a class="link" href="/results">Results</a>.</p>
+        </p>
+    </article>
+</div>
 {% endblock %}
