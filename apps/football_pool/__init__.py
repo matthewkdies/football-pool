@@ -10,8 +10,8 @@ from flask_security import Security
 from flask_socketio import SocketIO
 
 from .config import Config
-from .models import db
 from .get_scores import write_to_db
+from .models import db
 from .views import app_blueprint
 
 migrate = Migrate(db=db)
@@ -20,8 +20,10 @@ ma = Marshmallow()
 security = Security()
 io = SocketIO()
 scheduler = BackgroundScheduler()
-
-scheduler.add_job(write_to_db, CronTrigger(day_of_week="tue", hour=1, minute=0))
+scheduler.add_job(
+    func=write_to_db,
+    trigger=CronTrigger(day_of_week="tue", hour=2, minute=0),
+)
 
 
 def create_app(config_filename: Path = None):
