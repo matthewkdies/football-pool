@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from enum import StrEnum
 from typing import Callable
 
 from pydantic import ConfigDict
@@ -84,6 +85,14 @@ WINNING_TEAM_FUNC_MAP: dict[WinningType, Callable[[CurrentWeek], list[Team]]] = 
 """Maps the MOST and LEAST WinningTypes to functions to retrieve winners for the current week."""
 
 
+class GameStatus(StrEnum):
+    """An Enum class that handles the status of games."""
+
+    QUEUED = "STATUS_SCHEDULED"
+    IN_PROGRESS = "STATUS_IN_PROGRESS"
+    FINAL = "STATUS_FINAL"
+
+
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class Game:
     """Contains all of the information about a single game currently being played.
@@ -96,9 +105,9 @@ class Game:
     home_team_score: int
     away_team: Team
     away_team_score: int
-    is_active: bool
     espn_url: str
     gametime: datetime
+    status: GameStatus
     display_clock: str | None
     quarter: int | None
 
@@ -106,13 +115,11 @@ class Game:
     def get_all_from_events_list(events_list: list[dict]) -> list[Game]:
         games: list[Game] = []
         for event in events_list:
-            activity_status = event["status"]["type"]["name"]
-            if activity_status != "STATUS_IN_PROGRESS":
-                is_active = False
+            status = GameStatus(event["status"]["type"]["name"])
+            if status != GameStatus.IN_PROGRESS:
                 display_clock = None
                 quarter = None
             else:
-                is_active = True
                 display_clock = event["status"]["displayClock"]
                 quarter = int(event["status"]["period"])
             home_idx = 0 if event["competitions"][0]["competitors"][0]["homeAway"] == 0 else 1
@@ -127,14 +134,31 @@ class Game:
                     home_team_score=int(home_dict["score"]),
                     away_team=Team.from_abbr(away_dict["team"]["abbreviation"]),
                     away_team_score=int(away_dict["score"]),
-                    is_active=is_active,
                     espn_url=event["links"][0]["href"],
                     gametime=gametime,
+                    status=status,
                     display_clock=display_clock,
                     quarter=quarter,
                 )
             )
         return games
+
+    @property
+    def is_in_progress(self) -> bool:
+        """Returns True if the game is in progress, otherwise returns False.
+
+        Returns:
+            bool: Whether the game is in progress.
+        """
+        return self.status == GameStatus.IN_PROGRESS
+
+    @property
+    def is_final(self) -> bool:
+        return self.status == GameStatus.FINAL
+
+    @property
+    def is_queued(self) -> bool:
+        return self.status == GameStatus.QUEUED
 
     @property
     def date_str(self) -> str:
