@@ -45,6 +45,15 @@ class WinningType(StrEnum):
     PLAYOFF = "PLAYOFF"
     SUPER_BOWL = "SUPER_BOWL"
 
+    @property
+    def name_str(self) -> str:
+        """Displays the WinningType as a formatted string.
+
+        Returns:
+            str: A formatted string for the WinningType.
+        """
+        return self.value.replace("_", " ").title()
+
 
 @dataclass
 class Team(db.Model):
