@@ -5,6 +5,7 @@
 - [ ] Write the about page
 - [x] Put the theme selection in the cookies (does not expire)
 - [x] Make page content take up screensize if the content is smaller than screen, so footer stays on bottom of screen
+- [x] Make results page more engaging
 - [ ] Revisit HTMX installation to improve runtime
 - [ ] Write tests
 - [ ] Do practical "real-life" tests
