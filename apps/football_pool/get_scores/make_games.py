@@ -362,6 +362,20 @@ class CurrentWeek:
             winning_teams.append(winner)
         return winning_teams
 
+    def get_pool_winning_teams(self) -> set[Team]:
+        """Returns all teams that are currently winning the football pool.
+
+        Returns:
+            set[Team]: A set of Teams that are currently winning the football pool.
+        """
+        winning_team_funcs: tuple[Callable[[CurrentWeek], list[Team]]] = (
+            self.get_weekly_winning_teams,
+            self.get_fifty_point_winners,
+            self.get_postseason_winners,
+            self.get_super_bowl_winners,
+        )
+        return set(team for winning_team_func in winning_team_funcs for team in winning_team_func())
+
     @staticmethod
     def get_from_json(query_json: dict) -> CurrentWeek:
         """Gets the CurrentWeek object from a JSON response to an ESPN query.
