@@ -1,6 +1,6 @@
 - [ ] Fix the game computation (how was it broken again?) it's likely about using a set instead of a list somewhere, but I couldn't find this
 - [x] Fix finished game HTML
-- [ ] Add ESPN link to the games
+- [x] Add ESPN link to the games
 - [ ] Add tables to `/results`
 - [ ] Write the about page
 - [ ] Put the theme selection in the cookies (does not expire)

@@ -9,19 +9,21 @@
 <div class="p-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {% for game in sorted_games %}
-            <div class="card bg-base-200 dark:bg-base-300 shadow-xl">
-                <div class="card-body flex flex-row justify-between items-center">
-                    {% if game.is_queued %}
-                        {% include 'game_cards/queued.html' %}
-                    {% elif game.is_in_progress %}
-                        {% include 'game_cards/in_progress.html' %}
-                    {% elif game.is_final %}
-                        {% include 'game_cards/final.html' %}
-                    {% else %}
-                        <p>Matt, you've gravely screwed up! This is a bug and it should be fixed. D'oh.</p>
-                    {% endif %}
+            <a href="{{ game.espn_url }}" target="_blank">
+                <div class="card bg-base-200 dark:bg-base-300 shadow-xl">
+                    <div class="card-body flex flex-row justify-between items-center">
+                        {% if game.is_queued %}
+                            {% include 'game_cards/queued.html' %}
+                        {% elif game.is_in_progress %}
+                            {% include 'game_cards/in_progress.html' %}
+                        {% elif game.is_final %}
+                            {% include 'game_cards/final.html' %}
+                        {% else %}
+                            <p>Matt, you've gravely screwed up! This is a bug and it should be fixed. D'oh.</p>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 </div>
