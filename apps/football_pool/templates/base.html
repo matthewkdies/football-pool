@@ -19,7 +19,7 @@
 
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 
     <header>
         {% include 'layout/navbar.html' %}
@@ -29,7 +29,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer class="mt-auto">
         {% include 'layout/footer.html' %}
     </footer>
 

@@ -3580,6 +3580,10 @@ html {
   margin-top: 0.75rem;
 }
 
+.mt-auto {
+  margin-top: auto;
+}
+
 .block {
   display: block;
 }
@@ -3618,6 +3622,10 @@ html {
 
 .h-full {
   height: 100%;
+}
+
+.min-h-screen {
+  min-height: 100vh;
 }
 
 .w-10 {
