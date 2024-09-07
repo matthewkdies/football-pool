@@ -26,3 +26,13 @@ if __name__ == "__main__":
         end_time = time.perf_counter()
 
     print(f"{round(end_time - start_time, 6)} seconds to get via request.")
+
+    # ---
+
+    # import json
+    # from pathlib import Path
+
+    # query_json = requests.get(DEFAULT_URL, DEFAULT_PARAMS).json()
+
+    # with Path("/workspace/cur_week_output.json").open("w", encoding="utf-8") as outfile:
+    #     json.dump(query_json, outfile)
