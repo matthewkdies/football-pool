@@ -6,6 +6,63 @@
 <article class="prose prose-lg max-w-none">
     <!-- <h2 align="center">Results So Far</h2> -->
     <h2 align="center">Results So Far</h2>
-    <p align="center">This is where the results for the year so far will go.</p>
+    <div class="p-4">
+        {% if winning_games %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Table 1 -->
+                <div class="overflow-x-auto mb-6">
+                    <table class="table table-lg">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Team</th>
+                                <th>Owner</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- row per winning game -->
+                            {% for winning_game in winning_games %}
+                                <tr>
+                                    <td>{{ winning_game.week }}</td>
+                                    <td>{{ winning_game.team.name_str }}</td>
+                                    <td>{{ winning_game.team.owner.name_str }}</td>
+                                    <td>{{ winning_game.winning_type.name_str }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Divider for small screens -->
+                <div class="divider lg:hidden"></div>
+
+                <!-- Table 2 -->
+                <div class="overflow-x-auto">
+                    <table class="table table-lg">
+                        <thead>
+                            <tr>
+                                <th>Owner</th>
+                                <th>Winnings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- row per winning game -->
+                            {% for owner in winning_owners %}
+                                <tr>
+                                    <td>{{ owner.name_str }}</td>
+                                    <td>${{ owner.winnings }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning shadow-lg">
+                <span>No winners yet, check back soon!</span>
+            </div>
+        {% endif %}
+    </div>
 </article>
 {% endblock %}

@@ -4,7 +4,7 @@ from pathlib import Path
 from flask import Blueprint, render_template
 
 from .get_scores import get_live_scores
-from .models import Owner, Team
+from .models import Owner, WinningGame
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,11 @@ def assignments():
 
 @app_blueprint.route("/results")
 def results():
-    return render_template("results.html")
+    winning_games = WinningGame.query.all()
+    winning_owners = Owner.query.where(Owner.winnings > 0).order_by(Owner.winnings.desc())
+    return render_template(
+        "results.html", winning_games=winning_games, winning_owners=winning_owners
+    )
 
 
 @app_blueprint.route("/about")
