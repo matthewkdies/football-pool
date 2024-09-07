@@ -154,10 +154,20 @@ class Game:
 
     @property
     def is_final(self) -> bool:
+        """Returns True if the game is final, otherwise returns False.
+
+        Returns:
+            bool: Whether the game is final.
+        """
         return self.status == GameStatus.FINAL
 
     @property
     def is_queued(self) -> bool:
+        """Returns True if the game is queued, otherwise returns False.
+
+        Returns:
+            bool: Whether the game is queued.
+        """
         return self.status == GameStatus.QUEUED
 
     @property
