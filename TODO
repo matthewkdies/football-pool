@@ -1,9 +1,10 @@
 - [ ] Fix the game computation (how was it broken again?) it's likely about using a set instead of a list somewhere, but I couldn't find this
 - [x] Fix finished game HTML
 - [x] Add ESPN link to the games
-- [ ] Add tables to `/results`
+- [x] Add tables to `/results`
 - [ ] Write the about page
-- [ ] Put the theme selection in the cookies (does not expire)
+- [x] Put the theme selection in the cookies (does not expire)
+- [ ] Revisit HTMX installation to improve runtime
 - [ ] Write tests
 - [ ] Do practical "real-life" tests
 - [ ] Create map (?)
