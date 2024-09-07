@@ -7,3 +7,4 @@ node_modules
 pgdata
 .ruff_cache
 .DS_Store
+cur_week_output.json
