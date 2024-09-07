@@ -38,6 +38,7 @@ def write_to_db() -> list[WinningGame]:
                 team=team,
             )
         )
+        team.owner.winnings += winnings
     for team in fifty_point_teams:
         winning_games.append(
             WinningGame(
@@ -47,6 +48,7 @@ def write_to_db() -> list[WinningGame]:
                 team=team,
             )
         )
+        team.owner.winnings += 50
 
     # add all of 'em and push em up!
     db.session.add_all(winning_games)
