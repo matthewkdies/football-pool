@@ -11,7 +11,7 @@ def write_to_db() -> list[WinningGame]:
     current_week = get_live_scores()
     # if it's Super Bowl week, the winner gets $25
     if current_week.is_super_bowl:
-        winners = current_week.get_super_bowl_winner()
+        winners = current_week.get_super_bowl_winners()
         winnings = 25
         winning_type = WinningType.SUPER_BOWL
     # if it's a postseason week, all winners get $10
