@@ -244,12 +244,18 @@ class CurrentWeek:
 
     @property
     def winning_type(self) -> WinningType:
-        """Finds whether the week is a most or least week.
+        """Finds what WinningType corresponds to the current week.
 
         - `number` % 2 == 1 -> `number` is odd.
         - Odd weeks are most weeks.
         - Even weeks are least weeks.
         """
+        if self.is_super_bowl:
+            logger.debug("It's Super Bowl week! The winner is the Super Bowl team's owner.")
+            return WinningType.SUPER_BOWL
+        if self.is_postseason:
+            logger.debug("It's the postseason. The winners are the winning team's owners.")
+            return WinningType.PLAYOFF
         if self.week % 2:
             # it's an odd week
             logger.debug("It's an ODD week, so it's a MOST points week.")
