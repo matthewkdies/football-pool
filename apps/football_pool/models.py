@@ -66,6 +66,14 @@ class Team(db.Model):
         "Owner", back_populates="team", uselist=False, foreign_keys=[owner_id], single_parent=True
     )
 
+    def __hash__(self) -> int:
+        """Makes the Team class hashable.
+
+        Returns:
+            int: The hash of the Team's abbreviation (which is unique).
+        """
+        return hash(self.abbreviation)
+
     @property
     def name_str(self) -> str:
         """Displays the team's name as a string."""
