@@ -211,7 +211,7 @@ class Game:
         return lower_or_equal_score
 
     @property
-    def winner(self) -> Team:
+    def winning_team(self) -> Team:
         """Computes the game's winner. Should only be called when the game is not tied!
 
         Raises:
@@ -326,7 +326,7 @@ class CurrentWeek:
             return []
         winning_teams: list[Team] = []
         for game in self.games:
-            winner = game.winner
+            winner = game.winning_team
             logger.debug(
                 "%s won a postseason game! Congrats, unless they're an AFCN team that isn't the Steelers.",
                 winner.abbreviation,
@@ -347,7 +347,7 @@ class CurrentWeek:
             return []
         winning_teams: list[Team] = []
         for game in self.games:
-            winner = game.winner
+            winner = game.winning_team
             logger.debug(
                 "%s won the Super Bowl. If the Steelers just won, I'll definitely be crying right now.",
                 winner.abbreviation,
