@@ -92,6 +92,19 @@ class GameStatus(StrEnum):
     IN_PROGRESS = "STATUS_IN_PROGRESS"
     FINAL = "STATUS_FINAL"
 
+    @classmethod
+    def _missing_(cls, value: str) -> GameStatus:
+        value = value.upper()
+        for member in cls:
+            if member.value == value:
+                return member
+
+        # fallback to returning the in progress status
+        # there are some weird statuses that I have seen only in passing
+        # I know for a fact that STATUS_SCHEDULED and STATUS_FINAL are valid, so anything
+        # in between probably means the game is being played lol
+        return GameStatus.IN_PROGRESS
+
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class Game:
