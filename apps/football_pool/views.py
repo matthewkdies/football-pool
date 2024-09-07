@@ -1,9 +1,12 @@
+import logging
 from pathlib import Path
 
 from flask import Blueprint, render_template
 
 from .get_scores import get_live_scores
 from .models import Owner, Team
+
+logger = logging.getLogger(__name__)
 
 __APPPATH = Path(__file__).parent
 
@@ -18,7 +21,19 @@ app_blueprint = Blueprint(
 @app_blueprint.route("/")
 def index():
     current_week = get_live_scores()
-    return render_template("index.html", current_week=current_week)
+    sorted_games = sorted(current_week.games, key=lambda game: game.gametime)
+    winning_teams = current_week.get_pool_winning_teams()
+    if len(winning_teams) >= 16:
+        logger.debug(
+            "It's likely that there aren't 16 teams actually winning the pool. Not rendering winners."
+        )
+        winning_teams = []
+    return render_template(
+        "index.html",
+        current_week=current_week,
+        sorted_games=sorted_games,
+        winning_teams=winning_teams,
+    )
 
 
 @app_blueprint.route("/assignments")

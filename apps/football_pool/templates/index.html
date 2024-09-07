@@ -1,46 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Live Results{% endblock %}
 
 {% block content %}
 <article class="prose prose-lg max-w-none">
-    <h2 align="center">Live Results: Week {{ current_week.week }}</h2>
+    <h2 align="center">Live Results: Week {{ current_week.week }} ({{ current_week.winning_type.value.replace("_", " ").title() }} Week)</h2>
 </article>
 <div class="p-4">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {% for game in current_week.games %}
-            {% set away_team = game.away_team %}
-            {% set home_team = game.home_team %}
-            {% set is_active = game.is_active %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for game in sorted_games %}
             <div class="card bg-base-200 dark:bg-base-300 shadow-xl">
                 <div class="card-body flex flex-row justify-between items-center">
-                    <!-- Away Team -->
-                    <div class="flex flex-col items-center">
-                        <img src="{{ away_team.logo_url }}" alt="{{ away_team.name_str }} Logo" class="w-16 h-auto">
-                        {% if is_active %}
-                            <span class="text-xl font-bold">{{ game.away_team_score }}</span>
-                        {% endif %}
-                    </div>
-                    {% if is_active %}
-                        <!-- Game Time and Quarter -->
-                        <div class="flex flex-col items-center">
-                            <span class="text-lg font-semibold">{{ game.display_clock }}</span>
-                            <span class="text-sm">Q{{ game.quarter }}</span>
-                        </div>
+                    {% if game.is_queued %}
+                        {% include 'game_cards/queued.html' %}
+                    {% elif game.is_in_progress %}
+                        {% include 'game_cards/in_progress.html' %}
+                    {% elif game.is_final %}
+                        {% include 'game_cards/final.html' %}
                     {% else %}
-                        <!-- Start Date and Time -->
-                        <div class="flex flex-col items-center">
-                            <span class="text-lg font-semibold">{{ game.date_str }}</span>
-                            <span class="text-sm">{{ game.start_time_str }} EST</span>
-                        </div>
+                        <p>Matt, you've gravely screwed up! This is a bug and it should be fixed. D'oh.</p>
                     {% endif %}
-                    <!-- Home Team -->
-                    <div class="flex flex-col items-center">
-                        <img src="{{ home_team.logo_url }}" alt="{{ home_team.name_str }} Logo" class="w-16 h-auto">
-                        {% if is_active %}
-                            <span class="text-xl font-bold">{{ game.home_team_score }}</span>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
         {% endfor %}
