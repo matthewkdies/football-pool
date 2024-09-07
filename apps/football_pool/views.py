@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import logging
+from enum import StrEnum
 from pathlib import Path
 
-from flask import Blueprint, render_template
+from flask import Blueprint, Response, g, make_response, render_template, request
 
 from .get_scores import get_live_scores
 from .models import Owner, WinningGame
@@ -16,6 +19,15 @@ app_blueprint = Blueprint(
     static_folder=__APPPATH / "static",
     template_folder=__APPPATH / "templates",
 )
+
+
+@app_blueprint.before_request
+def load_theme():
+    """Loads the theme from the cookies and puts it into the g variables."""
+    if request.method == "GET":  # Only handle theme setting for GET requests
+        theme = Theme.get_from_cookie()
+        g.theme = theme.value
+        g.other_theme = theme.opposite.value
 
 
 @app_blueprint.route("/")
@@ -59,3 +71,60 @@ def about():
 @app_blueprint.route("/rules")
 def rules():
     return render_template("rules.html")
+
+
+class Theme(StrEnum):
+    """An Enum class to handle the light and dark mode themes."""
+
+    LIGHT = "light"
+    DARK = "dark"
+
+    @property
+    def opposite(self) -> Theme:
+        """Returns the opposite theme of the current.
+
+        This is useful for swapping the theme and providing the "other" value when making the checkbox.
+
+        Returns:
+            Theme: The opposite theme of the current.
+        """
+        if self == Theme.LIGHT:
+            return Theme.DARK
+        return Theme.LIGHT
+
+    @classmethod
+    def default(cls) -> Theme:
+        """The default theme: light mode. Sorry Xavi, it's who I am.
+
+        Returns:
+            Theme: The default theme.
+        """
+        logger.debug("Getting theme from default.")
+        return Theme.LIGHT
+
+    @staticmethod
+    def get_from_cookie() -> Theme:
+        """Gets the current theme from the cookies, calling back to the default.
+
+        Returns:
+            Theme: The theme set in cookies, falling back on the default if not set.
+        """
+        theme_cookie = request.cookies.get("theme", None)
+        if theme_cookie is None:
+            return Theme.default()
+        logger.debug(f"Found {theme_cookie} in cookies.")
+        return Theme(theme_cookie)
+
+
+@app_blueprint.route("/swap-theme-cookie", methods=["POST"])
+def swap_theme_cookie() -> Response:
+    """Handles an HTMX POST to swap the cookie, for storing the theme in the cookies.
+
+    Returns:
+        Response: The same page, but with the cookie set.
+    """
+    theme = Theme.get_from_cookie()
+    logger.debug(f"Swapping theme cookie from {theme.value} to {theme.opposite.value}.")
+    resp = make_response("")  # no need to do anything with a response, just set the cookie
+    resp.set_cookie("theme", theme.opposite.value, max_age=31536000)
+    return resp

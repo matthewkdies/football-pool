@@ -39,7 +39,14 @@
   <div class="navbar-end">
     <label class="swap swap-rotate">
       <!-- this hidden checkbox controls the state -->
-      <input type="checkbox" class="theme-controller" value="dark" />
+      <input
+        type="checkbox"
+        class="theme-controller"
+        value="{{ g.other_theme }}"
+        hx-post="/swap-theme-cookie"
+        hx-trigger="change"
+        hx-swap="none"
+        />
 
       <!-- sun icon -->
       <svg

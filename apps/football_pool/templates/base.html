@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ g.theme }}">
 <head>
     <meta charset="utf-8">
     <meta name="description" content="A dashboard to track the results of the football pool, both weekly and over the year!">
@@ -34,6 +34,7 @@
     </footer>
 
     <!-- scripts -->
+    <script type="module" src="{{ url_for('static', filename='output/htmx.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
