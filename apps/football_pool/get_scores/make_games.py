@@ -90,6 +90,7 @@ class GameStatus(StrEnum):
 
     QUEUED = "STATUS_SCHEDULED"
     IN_PROGRESS = "STATUS_IN_PROGRESS"
+    HALFTIME = "STATUS_HALFTIME"
     FINAL = "STATUS_FINAL"
 
     @classmethod
@@ -164,6 +165,15 @@ class Game:
             bool: Whether the game is in progress.
         """
         return self.status == GameStatus.IN_PROGRESS
+
+    @property
+    def is_in_halftime(self) -> bool:
+        """Returns True if the game is in halftime, otherwise returns False.
+
+        Returns:
+            bool: Whether the game is in halftime.
+        """
+        return self.status == GameStatus.HALFTIME
 
     @property
     def is_final(self) -> bool:

@@ -15,6 +15,8 @@
                         {% include 'game_cards/queued.html' %}
                     {% elif game.is_in_progress %}
                         {% include 'game_cards/in_progress.html' %}
+                    {% elif game.is_in_halftime %}
+                        {% include 'game_cards/halftime.html' %}
                     {% elif game.is_final %}
                         {% include 'game_cards/final.html' %}
                     {% else %}

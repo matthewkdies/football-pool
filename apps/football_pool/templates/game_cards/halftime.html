@@ -1,0 +1,16 @@
+{% set away_team = game.away_team %}
+{% set home_team = game.home_team %}
+<!-- Away Team -->
+<div class="flex flex-col items-center p-1 rounded-lg {{ 'bg-green-500 bg-opacity-50 rounded-lg' if away_team in winning_teams else '' }}">
+    <img src="{{ away_team.logo_url }}" alt="{{ away_team.name_str }} Logo" class="w-16 h-auto">
+    <span class="text-xl font-bold text-center">{{ game.away_team_score }}</span>
+</div>
+<!-- Game Time and Quarter -->
+<div class="flex flex-col items-center">
+    <span class="text-lg font-semibold text-center">Halftime</span>
+</div>
+<!-- Home Team -->
+<div class="flex flex-col items-center p-1 rounded-lg {{ 'bg-green-500 bg-opacity-50 rounded-lg' if home_team in winning_teams else '' }}">
+    <img src="{{ home_team.logo_url }}" alt="{{ home_team.name_str }} Logo" class="w-16 h-auto">
+    <span class="text-xl font-bold text-center">{{ game.home_team_score }}</span>
+</div>
