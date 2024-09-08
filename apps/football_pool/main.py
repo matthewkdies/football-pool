@@ -51,7 +51,7 @@ def app_factory(config, app_name, blueprints=None):
 
 
 def heroku():
-    from apps.football_pool.config import PROJECT_NAME, Config
+    from .config import PROJECT_NAME, Config
 
     # setup app through APP_CONFIG envvar
     return app_factory(Config, PROJECT_NAME)
