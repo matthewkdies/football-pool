@@ -10,7 +10,7 @@ from flask_security import Security
 from flask_socketio import SocketIO
 
 from .config import Config
-from .get_scores import write_to_db
+from .get_scores import EST, write_to_db
 from .models import db
 from .views import app_blueprint
 
@@ -20,10 +20,6 @@ ma = Marshmallow()
 security = Security()
 io = SocketIO()
 scheduler = BackgroundScheduler()
-scheduler.add_job(
-    func=write_to_db,
-    trigger=CronTrigger(day_of_week="tue", hour=2, minute=0),
-)
 
 
 def create_app(config_filename: Path = None):
@@ -41,6 +37,13 @@ def create_app(config_filename: Path = None):
     # security.init_app(app)
     io.init_app(app)
     scheduler.start()
+
+    # add db writing func to scheduler
+    scheduler.add_job(
+        func=write_to_db,
+        trigger=CronTrigger(day_of_week="tue", hour=2, minute=15, timezone=EST),
+        args=[app],
+    )
 
     if config_filename:
         app.config.from_pyfile(config_filename)
