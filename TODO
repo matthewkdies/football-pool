@@ -1,16 +1,15 @@
-- [ ] Fix the game computation (how was it broken again?) it's likely about using a set instead of a list somewhere, but I couldn't find this
+- [x] Fix the game computation
 - [x] Fix finished game HTML
 - [x] Add ESPN link to the games
 - [x] Add tables to `/results`
-- [ ] Write the about page
+- [x] Write the about page
 - [x] Put the theme selection in the cookies (does not expire)
-- [x] Make page content take up screensize if the content is smaller than screen, so footer stays on bottom of screen
+- [x] Make footer stick to bottom of screen
 - [x] Make results page more engaging
-- [ ] Revisit HTMX installation to improve runtime
+- [x] Revisit HTMX installation to improve runtime
+- [x] Test scheduled job
 - [ ] Write tests
 - [ ] Do practical "real-life" tests
-- [ ] Create map (?)
-- [ ] Test scheduled job
 - [ ] Create production app
 - [ ] Test production app on Macbook
 - [ ] Review GitHub project permissions
