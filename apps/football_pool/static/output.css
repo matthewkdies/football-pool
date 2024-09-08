@@ -3582,6 +3582,10 @@ html {
   display: grid;
 }
 
+.contents {
+  display: contents;
+}
+
 .hidden {
   display: none;
 }
@@ -3648,6 +3652,10 @@ html {
 
 .list-decimal {
   list-style-type: decimal;
+}
+
+.list-disc {
+  list-style-type: disc;
 }
 
 .grid-cols-1 {
@@ -3776,6 +3784,10 @@ html {
   text-align: center;
 }
 
+.indent-10 {
+  text-indent: 2.5rem;
+}
+
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -3811,11 +3823,6 @@ html {
 .text-base-content {
   --tw-text-opacity: 1;
   color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
-}
-
-.text-blue-500 {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
 .shadow {
@@ -3871,10 +3878,6 @@ html {
     height: auto;
     width: 1rem;
   }
-}
-
-.hover\:underline:hover {
-  text-decoration-line: underline;
 }
 
 @media (min-width: 640px) {
