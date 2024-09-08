@@ -20,3 +20,4 @@ pydantic
 apscheduler
 requests
 pytz
+gunicorn
