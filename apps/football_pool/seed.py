@@ -1,33 +1,26 @@
 from pathlib import Path
 
-from flask import url_for
+from flask import current_app
 
-from . import create_app, db
+from . import db
 from .models import Conference, Division, Owner, Team
 
 STATIC_DIR = Path(__file__).parent / "static"
 
 
 def get_logo_url(team_name: str) -> str:
-    """Gets the URL to the logo image after confirming it exists.
+    """Gets the URL to the logo image, relative to the static dir.
 
     Args:
         team_name (str): The name of the team `f"{<city>.lower()}-{<name>.lower()}"`.
 
-    Raises:
-        FileNotFoundError: If the file doesn't exist at this location.
-
     Returns:
-        str: The correct link to the image.
+        str: The image link relative to the static directory.
     """
-    filename = STATIC_DIR / f"logos/{team_name}-logo-transparent.png"
-    if not filename.exists():
-        raise FileNotFoundError(filename)
-    return url_for("static", filename=filename.relative_to(STATIC_DIR))
+    return f"logos/{team_name}-logo-transparent.png"
 
 
-app = create_app()
-with app.app_context():
+with current_app.app_context():
     # -----------------------------------
     # add the teams and all of their info
     # -----------------------------------
@@ -595,7 +588,7 @@ with app.app_context():
     ]
 
 
-if __name__ == "__main__":
+def seed() -> None:
     # confirm number of teams
     if len(TEAMS) != 32:
         raise ValueError("Must be 32 teams.")
@@ -605,8 +598,7 @@ if __name__ == "__main__":
         raise ValueError("Must be 29 owners.")
 
     # add everything to the database
-    app = create_app()
-    with app.app_context():
+    with current_app.app_context():
         db.session.add_all(TEAMS)
         db.session.add_all(OWNERS)
         db.session.commit()
