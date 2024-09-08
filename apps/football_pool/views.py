@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import logging
 from enum import StrEnum
 from pathlib import Path
 
-from flask import Blueprint, Response, g, make_response, render_template, request
+from flask import Blueprint, Response, g, make_response, render_template, request, current_app
 
 from .get_scores import get_live_scores
 from .models import Owner, WinningGame
-
-logger = logging.getLogger(__name__)
 
 __APPPATH = Path(__file__).parent
 
@@ -36,7 +33,7 @@ def index():
     sorted_games = sorted(current_week.games, key=lambda game: game.gametime)
     winning_teams = current_week.get_pool_winning_teams()
     if len(winning_teams) >= 16:
-        logger.debug(
+        current_app.logger.debug(
             "It's likely that there aren't 16 teams actually winning the pool. Not rendering winners."
         )
         winning_teams = []
@@ -94,7 +91,7 @@ class Theme(StrEnum):
         Returns:
             Theme: The default theme.
         """
-        logger.debug("Getting theme from default.")
+        current_app.logger.debug("Getting theme from default.")
         return Theme.LIGHT
 
     @staticmethod
@@ -107,7 +104,7 @@ class Theme(StrEnum):
         theme_cookie = request.cookies.get("theme", None)
         if theme_cookie is None:
             return Theme.default()
-        logger.debug(f"Found {theme_cookie} in cookies.")
+        current_app.logger.debug(f"Found {theme_cookie} in cookies.")
         return Theme(theme_cookie)
 
 
@@ -119,7 +116,7 @@ def swap_theme_cookie() -> Response:
         Response: The same page, but with the cookie set.
     """
     theme = Theme.get_from_cookie()
-    logger.debug(f"Swapping theme cookie from {theme.value} to {theme.opposite.value}.")
+    current_app.logger.debug(f"Swapping theme cookie from {theme.value} to {theme.opposite.value}.")
     resp = make_response("")  # no need to do anything with a response, just set the cookie
     resp.set_cookie("theme", theme.opposite.value, max_age=31536000)
     return resp

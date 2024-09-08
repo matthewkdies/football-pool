@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 from datetime import datetime
 from enum import StrEnum
 from typing import Callable
 
+from flask import current_app
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 from pytz import timezone
@@ -13,8 +13,6 @@ from ..models import Team, WinningType
 from .exceptions import GameNotOverError, GameTiedError
 
 EST = timezone("US/Eastern")
-
-logger = logging.getLogger(__name__)
 
 
 def find_teams_with_most_points(current_week: CurrentWeek) -> list[Team]:
@@ -29,14 +27,14 @@ def find_teams_with_most_points(current_week: CurrentWeek) -> list[Team]:
     most_points = max(
         game.max_score for game in current_week.games if game.status != GameStatus.QUEUED
     )
-    logger.debug("The most points scored in the week is %s.", most_points)
+    current_app.logger.debug("The most points scored in the week is %s.", most_points)
     winning_teams: list[Team] = []
     for game in current_week.games:
         if game.home_team_score == most_points:
             winning_teams.append(game.home_team)
         if game.away_team_score == most_points:
             winning_teams.append(game.away_team)
-    logger.debug("%s team(s) scored the most points this week.", len(winning_teams))
+    current_app.logger.debug("%s team(s) scored the most points this week.", len(winning_teams))
     return winning_teams
 
 
@@ -52,14 +50,14 @@ def find_teams_with_least_points(current_week: CurrentWeek) -> list[Team]:
     least_points = min(
         game.min_score for game in current_week.games if game.status != GameStatus.QUEUED
     )
-    logger.debug("The least points scored in the week is %s.", least_points)
+    current_app.logger.debug("The least points scored in the week is %s.", least_points)
     winning_teams: list[Team] = []
     for game in current_week.games:
         if game.home_team_score == least_points:
             winning_teams.append(game.home_team)
         if game.away_team_score == least_points:
             winning_teams.append(game.away_team)
-    logger.debug("%s team(s) scored the least points this week.", len(winning_teams))
+    current_app.logger.debug("%s team(s) scored the least points this week.", len(winning_teams))
     return winning_teams
 
 
@@ -78,7 +76,7 @@ def find_teams_with_fifty_points(current_week: CurrentWeek) -> list[Team]:
             winning_teams.append(game.home_team)
         if game.away_team_score == 50:
             winning_teams.append(game.away_team)
-    logger.debug("%s team(s) scored fifty points this week.", len(winning_teams))
+    current_app.logger.debug("%s team(s) scored fifty points this week.", len(winning_teams))
     return winning_teams
 
 
@@ -223,7 +221,7 @@ class Game:
             int: The maximum score from the game.
         """
         higher_score = max(self.home_team_score, self.away_team_score)
-        logger.debug(
+        current_app.logger.debug(
             "The higher score from the %s@%s game is %s.",
             self.away_team.abbreviation,
             self.home_team.abbreviation,
@@ -239,7 +237,7 @@ class Game:
             int: The minimum score from the game.
         """
         lower_or_equal_score = min(self.home_team_score, self.away_team_score)
-        logger.debug(
+        current_app.logger.debug(
             "The lower (or equal) points scored in the %s@%s game is %s.",
             self.away_team.abbreviation,
             self.home_team.abbreviation,
@@ -263,9 +261,9 @@ class Game:
         if self.home_team_score == self.away_team_score:
             raise GameTiedError()
         if self.home_team_score > self.away_team_score:
-            logger.debug("Winning team is %s.", self.home_team.abbreviation)
+            current_app.logger.debug("Winning team is %s.", self.home_team.abbreviation)
             return self.home_team
-        logger.debug("Winning team is %s.", self.away_team.abbreviation)
+        current_app.logger.debug("Winning team is %s.", self.away_team.abbreviation)
         return self.away_team
 
 
@@ -288,17 +286,21 @@ class CurrentWeek:
         - Even weeks are least weeks.
         """
         if self.is_super_bowl:
-            logger.debug("It's Super Bowl week! The winner is the Super Bowl team's owner.")
+            current_app.logger.debug(
+                "It's Super Bowl week! The winner is the Super Bowl team's owner."
+            )
             return WinningType.SUPER_BOWL
         if self.is_postseason:
-            logger.debug("It's the postseason. The winners are the winning team's owners.")
+            current_app.logger.debug(
+                "It's the postseason. The winners are the winning team's owners."
+            )
             return WinningType.PLAYOFF
         if self.week % 2:
             # it's an odd week
-            logger.debug("It's an ODD week, so it's a MOST points week.")
+            current_app.logger.debug("It's an ODD week, so it's a MOST points week.")
             return WinningType.MOST
         # it's an even week
-        logger.debug("It's an EVEN week, so it's a LEAST points week.")
+        current_app.logger.debug("It's an EVEN week, so it's a LEAST points week.")
         return WinningType.LEAST
 
     def get_weekly_winning_teams(self) -> list[Team]:
@@ -308,7 +310,7 @@ class CurrentWeek:
             list[Team]: A list of winning teams.
         """
         if self.is_postseason:
-            logger.warning(
+            current_app.logger.warning(
                 "It's a postseason week, so there are no most or least winners. Returning empty list."
             )
             return []
@@ -337,7 +339,7 @@ class CurrentWeek:
             bool: Whether the current week is a postseason game.
         """
         is_postseason = self.week >= 19
-        logger.debug("is_postseason=%s", is_postseason)
+        current_app.logger.debug("is_postseason=%s", is_postseason)
         return is_postseason
 
     @property
@@ -355,7 +357,7 @@ class CurrentWeek:
             bool: Whether the current week is Super Bowl week.
         """
         is_super_bowl = self.week == 23
-        logger.debug("is_super_bowl=%s", is_super_bowl)
+        current_app.logger.debug("is_super_bowl=%s", is_super_bowl)
         return is_super_bowl
 
     def get_postseason_winners(self) -> list[Team]:
@@ -365,12 +367,12 @@ class CurrentWeek:
             list[Team]: The list of Teams that won a postseason game this week.
         """
         if not self.is_postseason:
-            logger.warning("It's not the postseason. Returning an empty list.")
+            current_app.logger.warning("It's not the postseason. Returning an empty list.")
             return []
         winning_teams: list[Team] = []
         for game in self.games:
             winner = game.winning_team
-            logger.debug(
+            current_app.logger.debug(
                 "%s won a postseason game! Congrats, unless they're an AFCN team that isn't the Steelers.",
                 winner.abbreviation,
             )
@@ -387,12 +389,12 @@ class CurrentWeek:
             list[Team]: The list of Teams that won the Super Bowl this week.
         """
         if not self.is_super_bowl:
-            logger.warning("It's not Super Bowl week. Returning an empty list.")
+            current_app.logger.warning("It's not Super Bowl week. Returning an empty list.")
             return []
         winning_teams: list[Team] = []
         for game in self.games:
             winner = game.winning_team
-            logger.debug(
+            current_app.logger.debug(
                 "%s won the Super Bowl. If the Steelers just won, I'll definitely be crying right now.",
                 winner.abbreviation,
             )
