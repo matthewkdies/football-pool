@@ -1,0 +1,44 @@
+secrets:
+  flask_secret_key:
+    file: ../secrets/flask_secret_key.txt
+  db_user:
+    file: ../secrets/db_user.txt
+  db_pass:
+    file: ../secrets/db_pass.txt
+
+services:
+  flask_app:
+    build:
+      args:
+        PYTHON_TAG: 3-alpine
+      context: ..
+      dockerfile: ./prod/prod.dockerfile
+    secrets:
+      - flask_secret_key
+      - db_user
+      - db_pass
+
+  football-pool-db:
+    image: postgres:16
+    container_name: football-pool-postgres-prod
+    hostname: football-pool-postgres
+    mem_limit: 1g
+    cpu_shares: 768
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "sh", "-c", "pg_isready -q -d football-pool -U $(cat /run/secrets/db_user)"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data:rw
+    secrets:
+      - flask_secret_key
+      - db_user
+      - db_pass
+    environment:
+      POSTGRES_DB: football-pool
+      POSTGRES_USER_FILE: /run/secrets/db_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+    restart: on-failure:5
