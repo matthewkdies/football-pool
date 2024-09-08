@@ -24,7 +24,7 @@
                             href="https://www.espn.com/nfl/team/_/name/{{ team.abbreviation.lower() }}/{{ team.city.lower().replace(' ', '-') }}-{{ team.name.lower().replace(' ', '-') }}"
                             target="_blank">
                             <img
-                                src="{{ team.logo_url }}"
+                                src="{{ url_for('static', filename=team.logo_url) }}"
                                 alt="{{ team.city }} {{ team.name }} logo"
                                 class="w-auto h-full object-contain">
                         </a>

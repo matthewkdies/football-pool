@@ -2,7 +2,7 @@
 {% set home_team = game.home_team %}
 <!-- Away Team -->
 <div class="flex flex-col items-center p-1 rounded-lg">
-    <img src="{{ away_team.logo_url }}" alt="{{ away_team.name_str }} Logo" class="w-16 h-auto">
+    <img src="{{ url_for('static', filename=away_team.logo_url) }}" alt="{{ away_team.name_str }} Logo" class="w-16 h-auto">
 </div>
 <!-- Start Date and Time -->
 <div class="flex flex-col items-center">
@@ -11,5 +11,5 @@
 </div>
 <!-- Home Team -->
 <div class="flex flex-col items-center p-1 rounded-lg">
-    <img src="{{ home_team.logo_url }}" alt="{{ home_team.name_str }} Logo" class="w-16 h-auto">
+    <img src="{{ url_for('static', filename=home_team.logo_url) }}" alt="{{ home_team.name_str }} Logo" class="w-16 h-auto">
 </div>
