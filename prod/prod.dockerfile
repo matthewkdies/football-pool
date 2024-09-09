@@ -16,14 +16,12 @@ ENV APPS_DIR=${HOME}/apps \
 
 COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
-RUN <<EOF
-addgroup -g 1000 ${USER}
-adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER}
-apk update
-apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm
-npm --prefix ${APPS_DIR}/football_pool install
-pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
-EOF
+RUN addgroup -g 1000 ${USER} && \
+    adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER} && \
+    apk update && \
+    apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
+    npm --prefix ${APPS_DIR}/football_pool install && \
+    pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
 
 COPY --chown=notroot:notroot ./apps/tailwind.config.js ${APPS_DIR}
 COPY --chown=notroot:notroot ./apps/football_pool ${APPS_DIR}/football_pool
