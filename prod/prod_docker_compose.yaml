@@ -17,6 +17,10 @@ services:
         PYTHON_TAG: 3-alpine
       context: ..
       dockerfile: ./prod/prod.dockerfile
+      secrets:
+        - flask_secret_key
+        - db_user
+        - db_pass
     secrets:
       - flask_secret_key
       - db_user
@@ -46,3 +50,4 @@ services:
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
     restart: on-failure:5
+    network_mode: synobridge
