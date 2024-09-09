@@ -11,7 +11,8 @@ ENV APPS_DIR=${HOME}/apps \
     PYTHONUNBUFFERED=1 \
     FLASK_APP=football_pool \
     FLASK_DEBUG=0 \
-    FLASK_ENV=production
+    FLASK_ENV=production \
+    TZ=America/New_York
 
 COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
