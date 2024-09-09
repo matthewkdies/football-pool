@@ -20,7 +20,9 @@ RUN addgroup -g 1000 ${USER} && \
     adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER} && \
     apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
     npm --prefix ${APPS_DIR}/football_pool install && \
-    pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
+    pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
+    mkdir ${APPS_DIR}/migrations && \
+    chown 1000:1000 ${APPS_DIR}/migrations
 
 COPY --chown=notroot:notroot ./apps/tailwind.config.js ${APPS_DIR}
 COPY --chown=notroot:notroot ./apps/football_pool ${APPS_DIR}/football_pool
