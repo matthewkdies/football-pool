@@ -18,7 +18,6 @@ COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${A
 
 RUN addgroup -g 1000 ${USER} && \
     adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER} && \
-    apk update && \
     apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
     npm --prefix ${APPS_DIR}/football_pool install && \
     pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
