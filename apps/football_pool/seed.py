@@ -445,7 +445,7 @@ with current_app.app_context():
 
     MATT = Owner(
         first_name="Matt",
-        last_name="IodDiesice",
+        last_name="Dies",
         team=CHIEFS,
         winnings=0,
     )
