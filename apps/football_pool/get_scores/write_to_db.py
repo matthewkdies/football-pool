@@ -50,7 +50,8 @@ def write_to_db(current_app: Flask) -> list[WinningGame]:
                     team=team,
                 )
             )
-            team.owner.winnings += winnings
+            if team.owner is not None:
+                team.owner.winnings += winnings
         for team in fifty_point_teams:
             winning_games.append(
                 WinningGame(
@@ -60,7 +61,8 @@ def write_to_db(current_app: Flask) -> list[WinningGame]:
                     team=team,
                 )
             )
-            team.owner.winnings += 50
+            if team.owner is not None:
+                team.owner.winnings += 50
 
         # add all of 'em and push em up!
         db.session.add_all(winning_games)
