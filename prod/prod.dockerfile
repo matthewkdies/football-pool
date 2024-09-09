@@ -12,7 +12,7 @@ ENV APPS_DIR=${HOME}/apps \
     FLASK_APP=football_pool \
     FLASK_DEBUG=0 \
     FLASK_ENV=production \
-    TZ=America/New_York
+    TZ=UTC
 
 COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
