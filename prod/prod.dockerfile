@@ -1,6 +1,6 @@
 ARG PYTHON_TAG=3-alpine
 
-FROM python:${PYTHON_TAG}
+FROM --platform=linux/amd64 python:${PYTHON_TAG}
 
 EXPOSE 5600
 
