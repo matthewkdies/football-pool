@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import StrEnum
 from pathlib import Path
 
-from flask import Blueprint, Response, g, make_response, render_template, request, current_app
+from flask import Blueprint, Response, current_app, g, make_response, render_template, request
 
 from .get_scores import get_live_scores
 from .models import Owner, WinningGame
@@ -120,3 +120,8 @@ def swap_theme_cookie() -> Response:
     resp = make_response("")  # no need to do anything with a response, just set the cookie
     resp.set_cookie("theme", theme.opposite.value, max_age=31536000)
     return resp
+
+
+@app_blueprint.route("/healthcheck", methods=["GET"])
+def healthcheck():
+    return "ok"
