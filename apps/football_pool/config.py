@@ -9,8 +9,19 @@ PROJECT_NAME = "football-pool"
 DB_URI_TEMPLATE = "postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
-def read_secret_file(secret_file: Path) -> str:
-    return secret_file.read_text().strip()
+def get_from_secret(secret_file: Path) -> str:
+    """Tries to get a secret from a secrets file, falls back to env var.
+
+    Args:
+        secret_file (Path): The path to the secret file.
+
+    Returns:
+        str: The secret's value.
+    """
+    try:
+        return secret_file.read_text().strip()
+    except (PermissionError, FileNotFoundError):
+        return os.environ[secret_file.name.upper()]
 
 
 # base config class; extend it to your needs.
@@ -30,8 +41,8 @@ class Config(object):
     # DATABASE CONFIGURATION
 
     # Postgres + psycopg2 template
-    DB_USER = read_secret_file(Path("/run/secrets/db_user"))
-    DB_PASS = read_secret_file(Path("/run/secrets/db_pass"))
+    DB_USER = get_from_secret(Path("/run/secrets/db_user"))
+    DB_PASS = get_from_secret(Path("/run/secrets/db_pass"))
     DB_HOST = "football-pool-postgres"
     DB_PORT = 5432
     DB_NAME = "football-pool"
@@ -54,7 +65,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
     # import os; os.urandom(24)
-    SECRET_KEY = read_secret_file(Path("/run/secrets/flask_secret_key"))
+    SECRET_KEY = get_from_secret(Path("/run/secrets/flask_secret_key"))
 
     # LOGGING
     LOGGER_NAME = "%s_log" % PROJECT_NAME
