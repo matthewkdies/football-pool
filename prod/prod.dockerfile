@@ -14,11 +14,13 @@ ENV APPS_DIR=${HOME}/apps \
     FLASK_ENV=production \
     TZ=UTC
 
+RUN sed -i 's/https/http/' /etc/apk/repositories && \
+    addgroup -g 1000 ${USER} && \
+    adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER}
+
 COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
-RUN addgroup -g 1000 ${USER} && \
-    adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER} && \
-    apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
+RUN apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
     npm --prefix ${APPS_DIR}/football_pool install && \
     pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
     mkdir ${APPS_DIR}/migrations && \
