@@ -318,7 +318,7 @@ class CurrentWeek:
             list[Team]: A list of winning teams.
         """
         if self.is_postseason:
-            current_app.logger.warning(
+            current_app.logger.debug(
                 "It's a postseason week, so there are no most or least winners. Returning empty list."
             )
             return []
@@ -375,7 +375,7 @@ class CurrentWeek:
             list[Team]: The list of Teams that won a postseason game this week.
         """
         if not self.is_postseason:
-            current_app.logger.warning("It's not the postseason. Returning an empty list.")
+            current_app.logger.debug("It's not the postseason. Returning an empty list.")
             return []
         winning_teams: list[Team] = []
         for game in self.games:
