@@ -24,9 +24,13 @@ def find_teams_with_most_points(current_week: CurrentWeek) -> list[Team]:
     Returns:
         list[Team]: A list of Team objects that scored the most points.
     """
-    most_points = max(
-        game.max_score for game in current_week.games if game.status != GameStatus.QUEUED
-    )
+    active_games = [game for game in current_week.games if game.status != GameStatus.QUEUED]
+    if not active_games:
+        most_points = 0
+    else:
+        most_points = max(
+            game.min_score for game in current_week.games if game.status != GameStatus.QUEUED
+        )
     current_app.logger.debug("The most points scored in the week is %s.", most_points)
     winning_teams: list[Team] = []
     for game in current_week.games:
@@ -47,9 +51,13 @@ def find_teams_with_least_points(current_week: CurrentWeek) -> list[Team]:
     Returns:
         list[Team]: A list of Team objects that scored the least points.
     """
-    least_points = min(
-        game.min_score for game in current_week.games if game.status != GameStatus.QUEUED
-    )
+    active_games = [game for game in current_week.games if game.status != GameStatus.QUEUED]
+    if not active_games:
+        least_points = 0
+    else:
+        least_points = min(
+            game.min_score for game in current_week.games if game.status != GameStatus.QUEUED
+        )
     current_app.logger.debug("The least points scored in the week is %s.", least_points)
     winning_teams: list[Team] = []
     for game in current_week.games:
