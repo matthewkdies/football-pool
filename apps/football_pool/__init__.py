@@ -41,7 +41,7 @@ def create_app(config_filename: Path = None):
     # add db writing func to scheduler
     scheduler.add_job(
         func=write_to_db,
-        trigger=CronTrigger(day_of_week="tue", hour=2, minute=15, timezone=EST),
+        trigger=CronTrigger(day_of_week="tue", hour=1, minute=0, timezone=EST),
         args=[app],
     )
 
