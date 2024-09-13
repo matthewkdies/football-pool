@@ -2,8 +2,8 @@
 module.exports = {
 
   content: [
-    "./football_pool/templates/**/*.html",
-    "./football_pool/static/**/*.js",
+    "./apps/football_pool/templates/**/*.html",
+    "./apps/football_pool/static/**/*.js",
   ],
   theme: {
     extend: {},
