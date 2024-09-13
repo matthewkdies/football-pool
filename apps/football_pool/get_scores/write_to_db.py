@@ -6,7 +6,7 @@ from ..models import WinningGame, WinningType, db
 from .query import get_live_scores
 
 
-def write_to_db(current_app: Flask) -> list[WinningGame]:
+def write_to_db(current_app: Flask) -> None:
     """Computes the winners for the week and writes them to the database, returning them.
 
     Returns:
@@ -68,7 +68,6 @@ def write_to_db(current_app: Flask) -> list[WinningGame]:
         db.session.add_all(winning_games)
         db.session.commit()
         current_app.logger.info("Information written to the database. Exiting.")
-    return winning_games
 
 
 if __name__ == "__main__":
@@ -81,7 +80,4 @@ if __name__ == "__main__":
     app = create_app()
 
     with app.app_context():
-        winning_games = write_to_db()
-        for winning_game in winning_games:
-            WinningGame.query.where(WinningGame.id == winning_game.id).delete()
-        db.session.commit()
+        write_to_db()
