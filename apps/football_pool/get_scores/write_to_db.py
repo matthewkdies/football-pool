@@ -1,5 +1,3 @@
-import logging
-
 from flask import Flask
 
 from ..models import WinningGame, WinningType, db
@@ -13,7 +11,7 @@ def write_to_db(current_app: Flask) -> None:
         list[WinningGame]: The list of WinningGame objects.
     """
     with current_app.app_context():
-        logging.info("Beginning the writing of the week's results to the database.")
+        current_app.logger.info("Beginning the writing of the week's results to the database.")
         current_week = get_live_scores()
         # if it's Super Bowl week, the winner gets $25
         if current_week.is_super_bowl:
@@ -64,10 +62,9 @@ def write_to_db(current_app: Flask) -> None:
             if team.owner is not None:
                 team.owner.winnings += 50
 
-        # add all of 'em and push em up!
-        db.session.add_all(winning_games)
-        db.session.commit()
-        current_app.logger.info("Information written to the database. Exiting.")
+            # add all of 'em and push em up!
+            db.session.add_all(winning_games)
+            db.session.commit()
 
 
 if __name__ == "__main__":
