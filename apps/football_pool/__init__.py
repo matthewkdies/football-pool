@@ -2,7 +2,7 @@ from pathlib import Path
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask
+from flask import Flask, g, render_template, request
 from flask_admin import Admin
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 from .config import Config
 from .get_scores import EST, write_to_db
 from .models import db
-from .views import app_blueprint
+from .views import Theme, app_blueprint
 
 migrate = Migrate(db=db)
 admin = Admin()
@@ -37,6 +37,27 @@ def create_app(config_filename: Path = None):
     # security.init_app(app)
     io.init_app(app)
     scheduler.start()
+
+    @app.before_request
+    def load_theme():
+        """Loads the theme from the cookies and puts it into the g variables."""
+        if request.method == "GET":  # Only handle theme setting for GET requests
+            theme = Theme.get_from_cookie()
+            g.theme = theme.value
+            g.other_theme = theme.opposite.value
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        """Handles a 404 error to render the 404 template."""
+        app.logger.debug("Page not found, rendering 404 template.")
+        print
+        return render_template("http/404.html"), 404
+
+    @app.errorhandler(500)
+    def i_screwed_up_cuz_i_write_bad_code(error):
+        """Handles a 500 error to render the 500 template."""
+        app.logger.debug("Shit, I screwed up. Rendering 500 template.")
+        return render_template("http/500.html"), 500
 
     # add db writing func to scheduler
     scheduler.add_job(

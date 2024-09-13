@@ -18,15 +18,6 @@ app_blueprint = Blueprint(
 )
 
 
-@app_blueprint.before_request
-def load_theme():
-    """Loads the theme from the cookies and puts it into the g variables."""
-    if request.method == "GET":  # Only handle theme setting for GET requests
-        theme = Theme.get_from_cookie()
-        g.theme = theme.value
-        g.other_theme = theme.opposite.value
-
-
 @app_blueprint.route("/")
 def index():
     current_week = get_live_scores()
@@ -123,5 +114,10 @@ def swap_theme_cookie() -> Response:
 
 
 @app_blueprint.route("/healthcheck", methods=["GET"])
-def healthcheck():
+def healthcheck() -> str:
+    """Provides an endpoint to make healthchecks possible.
+
+    Returns:
+        str: The str "ok", if healthy.
+    """
     return "ok"
