@@ -20,7 +20,7 @@ RUN sed -i 's/https/http/' /etc/apk/repositories && \
 
 COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
-RUN apk add --no-cache gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
+RUN apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
     npm --prefix ${APPS_DIR}/football_pool install && \
     pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
     mkdir ${APPS_DIR}/migrations && \
