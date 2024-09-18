@@ -63,7 +63,9 @@ def create_app(config_filename: Path = None):
     scheduler.add_job(
         func=write_to_db,
         trigger=CronTrigger(day_of_week="tue", hour=1, minute=0, timezone=EST),
-        # args=[app],
+        misfire_grace_time=None,
+        max_instances=1,
+        coalesce=True,
     )
 
     if config_filename:
