@@ -397,7 +397,7 @@ class CurrentWeek:
             list[Team]: The list of Teams that won the Super Bowl this week.
         """
         if not self.is_super_bowl:
-            current_app.logger.warning("It's not Super Bowl week. Returning an empty list.")
+            current_app.logger.debug("It's not Super Bowl week. Returning an empty list.")
             return []
         winning_teams: list[Team] = []
         for game in self.games:
