@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import StrEnum
 from pathlib import Path
 
-from flask import Blueprint, Response, current_app, g, make_response, render_template, request
+from flask import Blueprint, Response, current_app, make_response, render_template, request
 
 from .get_scores import get_live_scores
 from .models import Owner, WinningGame
