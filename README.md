@@ -43,4 +43,4 @@ There have definitely been bugs, but `flask shell` is a really awesome command t
 That I love development, dude.
 It isn't often that I get a sudden strike of inspiration like this, but I absolutely could not put this idea away once it came to me.
 It was *really* cool to see this come together over the course of two weeks or so.
-I also learned a ton about the history of the football pool and my family -- I'm so luckily to have such an amazing family that can support and enjoy a project like this one!
+I also learned a ton about the history of the football pool and my family -- I'm so lucky to have such an amazing family that can support and enjoy a project like this one!
