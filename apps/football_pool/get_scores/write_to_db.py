@@ -1,9 +1,20 @@
+from functools import wraps
+
 from flask import current_app
 
 from ..models import WinningGame, WinningType, db
 from .query import get_live_scores
 
 
+def with_cur_app_context(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        with current_app.app_context():
+            return func(*args, **kwargs)
+    return wrapper
+
+
+@with_cur_app_context
 def write_to_db() -> None:
     """Computes the winners for the week and writes them to the database, returning them.
 
