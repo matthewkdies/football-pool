@@ -63,6 +63,7 @@ class Config(object):
     SQLALCHEMY_ECHO = DEBUG
     # track and emit signals on object modification?
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     WTF_CSRF_ENABLED = True
     # import os; os.urandom(24)
     SECRET_KEY = get_from_secret(Path("/run/secrets/flask_secret_key"))
