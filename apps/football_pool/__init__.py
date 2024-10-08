@@ -50,7 +50,6 @@ def create_app(config_filename: Path = None):
     def page_not_found(error):
         """Handles a 404 error to render the 404 template."""
         app.logger.debug("Page not found, rendering 404 template.")
-        print
         return render_template("http/404.html"), 404
 
     @app.errorhandler(500)
