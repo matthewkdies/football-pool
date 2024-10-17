@@ -1,4 +1,4 @@
-ARG PYTHON_TAG=3-alpine
+ARG PYTHON_TAG=3.12-alpine
 
 FROM --platform=linux/amd64 python:${PYTHON_TAG}
 
