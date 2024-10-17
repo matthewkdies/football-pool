@@ -10,7 +10,7 @@ from flask_security import Security
 from flask_socketio import SocketIO
 
 from .config import Config
-from .get_scores import EST, write_to_db
+from .get_scores import EST, clean_db, write_to_db
 from .models import db
 from .views import Theme, app_blueprint
 
@@ -63,6 +63,16 @@ def create_app(config_filename: Path = None):
         func=write_to_db,
         args=[app],
         trigger=CronTrigger(day_of_week="tue", hour=1, minute=0, timezone=EST),
+        misfire_grace_time=None,
+        max_instances=1,
+        coalesce=True,
+    )
+
+    # add db cleaning func to scheduler for 5 min later!
+    scheduler.add_job(
+        func=clean_db,
+        args=[app],
+        trigger=CronTrigger(day_of_week="tue", hour=1, minute=5, timezone=EST),
         misfire_grace_time=None,
         max_instances=1,
         coalesce=True,

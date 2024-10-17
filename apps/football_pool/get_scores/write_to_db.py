@@ -1,6 +1,8 @@
+from collections import defaultdict
+
 from flask import Flask
 
-from ..models import WinningGame, WinningType, db
+from ..models import Team, WinningGame, WinningType, db
 from .query import get_live_scores
 
 
@@ -66,6 +68,55 @@ def write_to_db(current_app: Flask) -> None:
         db.session.add_all(winning_games)
         db.session.commit()
         current_app.logger.info("Information written to the database. Exiting.")
+
+
+def clean_db(current_app: Flask) -> None:
+    """Cleans the database, since the above function writes like 100 times.
+
+    This will clean the `WinningGame`s in the database after the above function call.
+    When the above function writes in the scheduled job, it creates more than it should.
+    This is a band-aid fix, but easier to me than actually resolving the problem.
+    It should be fine that this runs multiple times, since it will preserve a single
+    `WinningGame` if it's correct.
+
+    Methodology:
+    - Get the `WinningGame`s for the current week.
+    - Map the teams to these objects, for each team:
+        - Map the winning type to the `WinningGame`s
+        - If this list is more than 1 long, it's a duplicate -> delete it!
+
+    Args:
+        current_app (Flask): The list of WinningGame objects.
+    """
+    with current_app.app_context():
+        current_app.logger.info("Beginning the cleaning of the week's results to the database.")
+        current_week = get_live_scores()
+        winning_games: list[WinningGame] = WinningGame.query.where(
+            WinningGame.week == current_week.week
+        ).all()
+
+        # gets a map of the teams to their WinningGame objects
+        team_to_wgs_map: dict[Team, list[WinningGame]] = defaultdict(list)
+        for winning_game in winning_games:
+            team_to_wgs_map[winning_game.team].append(winning_game)
+
+        # now we need to map the winning types to the WinningGames and delete duplicates
+        for team, winning_game_list in team_to_wgs_map.items():
+            current_app.logger.info("Cleaning the results for '%s'.", team.abbreviation)
+            type_to_wgs_map: dict[WinningType, list[WinningGame]] = defaultdict(list)
+            for winning_game in winning_game_list:
+                type_to_wgs_map[winning_game.winning_type].append(winning_game)
+            for winning_type, winning_game_list in type_to_wgs_map.items():
+                current_app.logger.debug("Cleaning the results for type '%s'.", winning_type.value)
+                # if there is only one WinningGame, great! We don't have to do anything
+                if len(winning_game_list) == 1:
+                    continue
+
+                # finally, we can delete all of the relevant games
+                for winning_game in winning_game_list[1:]:
+                    db.session.delete(winning_game)
+
+        db.session.commit()
 
 
 if __name__ == "__main__":
