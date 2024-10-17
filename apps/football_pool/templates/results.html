@@ -26,7 +26,7 @@
                                 <tr>
                                     <td>{{ winning_game.week }}</td>
                                     <td>{{ winning_game.team.name_str }}</td>
-                                    <td>{{ winning_game.team.owner.name_str }}</td>
+                                    <td>{{ winning_game.team.owner.name_str if winning_game.team.owner.name_str else "No one (rigged)" }}</td>
                                     <td>{{ winning_game.winning_type.name_str }}</td>
                                 </tr>
                             {% endfor %}
