@@ -131,3 +131,12 @@ class WinningGame(db.Model):
     winning_type: Mapped[WinningType] = db.Column(db.Enum(WinningType), nullable=False)
     team_id: Mapped[int] = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
     team: Mapped[Team] = db.relationship("Team", uselist=False, single_parent=True)
+
+
+@dataclass
+class Pot(db.Model):
+    """Contains the current pot of winnings."""
+
+    __tablename__ = "pot"
+    id: Mapped[int] = db.Column(db.Integer, unique=True, primary_key=True)
+    amount: Mapped[int] = db.Column(db.Integer, nullable=False)
