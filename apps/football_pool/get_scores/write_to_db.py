@@ -2,8 +2,14 @@ from collections import defaultdict
 
 from flask import Flask
 
-from ..models import Team, WinningGame, WinningType, db
+from ..models import Pot, Team, WinningGame, WinningType, db
 from .query import get_live_scores
+
+
+def week_has_real_winners(winners: list[Team]) -> bool:
+    if any(winner.owner is None for winner in winners):
+        return True
+    return False
 
 
 def write_to_db(current_app: Flask) -> None:
@@ -27,9 +33,17 @@ def write_to_db(current_app: Flask) -> None:
             winning_type = WinningType.PLAYOFF
         # otherwise, the teams scoring most/least (appropriately) get $10
         else:
+            pot: Pot = Pot.query.one()
             winners = current_week.get_weekly_winning_teams()
-            winnings = 10
+            winnings = pot.amount
             winning_type = current_week.winning_type
+            # increase the pot amount, if needed
+            if week_has_real_winners(winners):
+                # this week has winners, set the pot to 10
+                pot.amount = 10
+            else:
+                # no winners here, increase the pot by 10
+                pot.amount += 10
         current_app.logger.info("Winners: %s", [team.abbreviation for team in winners])
         current_app.logger.info("Winnings: %s", winnings)
         current_app.logger.info("Winning Type: %s", winning_type.name_str)
