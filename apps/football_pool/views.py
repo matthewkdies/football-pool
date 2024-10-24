@@ -6,7 +6,7 @@ from pathlib import Path
 from flask import Blueprint, Response, current_app, make_response, render_template, request
 
 from .get_scores import get_live_scores
-from .models import Owner, WinningGame
+from .models import Owner, WinningGame, Pot
 
 __APPPATH = Path(__file__).parent
 
@@ -28,11 +28,13 @@ def index():
             "It's likely that there aren't 16 teams actually winning the pool. Not rendering winners."
         )
         winning_teams = []
+    pot = Pot.query.one()
     return render_template(
         "index.html",
         current_week=current_week,
         sorted_games=sorted_games,
         winning_teams=winning_teams,
+        pot=pot,
     )
 
 
