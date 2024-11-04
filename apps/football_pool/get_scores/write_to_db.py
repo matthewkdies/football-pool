@@ -7,9 +7,7 @@ from .query import get_live_scores
 
 
 def week_has_real_winners(winners: list[Team]) -> bool:
-    if any(winner.owner is None for winner in winners):
-        return True
-    return False
+    return any(winner.owner is not None for winner in winners)
 
 
 def write_to_db(current_app: Flask) -> None:
