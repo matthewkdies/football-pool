@@ -91,6 +91,23 @@ WINNING_TEAM_FUNC_MAP: dict[WinningType, Callable[[CurrentWeek], list[Team]]] = 
 """Maps the MOST and LEAST WinningTypes to functions to retrieve winners for the current week."""
 
 
+class SeasonType(StrEnum):
+    """An Enum class that handles the type of season (pre, regular, post)."""
+
+    PRESEASON = "PRESEASON"
+    REGULAR_SEASON = "REGULAR_SEASON"
+    POSTSEASON = "POSTSEASON"
+
+    @classmethod
+    def _missing_(cls, value: str | int) -> SeasonType:
+        if value == 1:
+            return SeasonType.PRESEASON
+        if value == 2:
+            return SeasonType.REGULAR_SEASON
+        if value == 3:
+            return SeasonType.POSTSEASON
+
+
 class GameStatus(StrEnum):
     """An Enum class that handles the status of games."""
 
@@ -136,7 +153,7 @@ class Game:
         games: list[Game] = []
         for event in events_list:
             status = GameStatus(event["status"]["type"]["name"])
-            if status != GameStatus.IN_PROGRESS:
+            if status == GameStatus.QUEUED:
                 display_clock = None
                 quarter = None
             else:
@@ -280,6 +297,7 @@ class CurrentWeek:
 
     week: int
     games: list[Game]
+    season_type: SeasonType
 
     @property
     def winning_type(self) -> WinningType:
@@ -342,7 +360,7 @@ class CurrentWeek:
         Returns:
             bool: Whether the current week is a postseason game.
         """
-        is_postseason = self.week >= 19
+        is_postseason = self.season_type == SeasonType.POSTSEASON
         current_app.logger.debug("is_postseason=%s", is_postseason)
         return is_postseason
 
@@ -360,7 +378,7 @@ class CurrentWeek:
         Returns:
             bool: Whether the current week is Super Bowl week.
         """
-        is_super_bowl = self.week == 23
+        is_super_bowl = self.season_type == SeasonType.POSTSEASON and self.week == 5
         current_app.logger.debug("is_super_bowl=%s", is_super_bowl)
         return is_super_bowl
 
@@ -375,7 +393,15 @@ class CurrentWeek:
             return []
         winning_teams: list[Team] = []
         for game in self.games:
-            winner = game.winning_team
+            try:
+                winner = game.winning_team
+            except GameNotOverError:
+                current_app.logger.debug(
+                    "%s @ %s is not over. Skipping.",
+                    game.away_team.abbreviation,
+                    game.home_team.abbreviation,
+                )
+                continue
             current_app.logger.debug(
                 "%s won a postseason game! Congrats, unless they're an AFCN team that isn't the Steelers.",
                 winner.abbreviation,
@@ -431,9 +457,11 @@ class CurrentWeek:
         """
         events_list = query_json["events"]
         games = Game.get_all_from_events_list(events_list=events_list)
+        season_type = SeasonType(query_json["leagues"][0]["season"]["type"]["type"])
         return CurrentWeek(
             week=int(query_json["week"]["number"]),
             games=games,
+            season_type=season_type,
         )
 
 
