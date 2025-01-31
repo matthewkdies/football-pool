@@ -21,3 +21,4 @@ apscheduler
 requests
 pytz
 gunicorn
+tzdata
