@@ -351,11 +351,11 @@ class CurrentWeek:
         """Returns whether the current week is a postseason week or not.
 
         There are 18 weeks in the regular season, then the postseason goes:
-        19 -> Wild Card
-        20 -> Divisional
-        21 -> Conference Champs
-        22 -> Pro Bowl
-        23 -> Super Bowl
+        1 -> Wild Card
+        2 -> Divisional
+        3 -> Conference Champs
+        4 -> Pro Bowl
+        5 -> Super Bowl
 
         Returns:
             bool: Whether the current week is a postseason game.
@@ -365,15 +365,33 @@ class CurrentWeek:
         return is_postseason
 
     @property
-    def is_super_bowl(self) -> bool:
-        """Returns whether the current week is the Super Bowl week.
+    def is_pro_bowl(self) -> bool:
+        """Returns whether the current week is Pro Bowl week.
 
         There are 18 weeks in the regular season, then the postseason goes:
-        19 -> Wild Card
-        20 -> Divisional
-        21 -> Conference Champs
-        22 -> Pro Bowl
-        23 -> Super Bowl
+        1 -> Wild Card
+        2 -> Divisional
+        3 -> Conference Champs
+        4 -> Pro Bowl
+        5 -> Super Bowl
+
+        Returns:
+            bool: Whether the current week is Pro Bowl week.
+        """
+        is_pro_bowl = self.season_type == SeasonType.POSTSEASON and self.week == 5
+        current_app.logger.debug("is_pro_bowl=%s", is_pro_bowl)
+        return is_pro_bowl
+
+    @property
+    def is_super_bowl(self) -> bool:
+        """Returns whether the current week is Super Bowl week.
+
+        There are 18 weeks in the regular season, then the postseason goes:
+        1 -> Wild Card
+        2 -> Divisional
+        3 -> Conference Champs
+        4 -> Pro Bowl
+        5 -> Super Bowl
 
         Returns:
             bool: Whether the current week is Super Bowl week.
