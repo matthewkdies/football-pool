@@ -1,33 +1,39 @@
 ARG PYTHON_TAG=3.12-alpine
 
-FROM --platform=linux/amd64 python:${PYTHON_TAG}
+FROM python:${PYTHON_TAG}
 
 EXPOSE 5600
 
 ARG USER=notroot
+ARG UID
+ARG GID
 
-ENV HOME /home/${USER}
-ENV APPS_DIR=${HOME}/apps \
+ENV APPS_DIR=/apps \
     PYTHONUNBUFFERED=1 \
     FLASK_APP=football_pool \
     FLASK_DEBUG=0 \
     FLASK_ENV=production \
     TZ=UTC
 
-RUN sed -i 's/https/http/' /etc/apk/repositories && \
-    addgroup -g 1000 ${USER} && \
-    adduser -S -h ${HOME} -u 1000 -G ${USER} ${USER}
+RUN <<EOF
+sed -i 's/https/http/' /etc/apk/repositories && \
+addgroup --system --gid ${GID} ${USER} && \
+adduser --system --uid ${UID} -G ${USER} ${USER}
+mkdir --parents ${APPS_DIR}/football_pool/
+EOF
 
-COPY --chown=notroot:notroot requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
+COPY --chown=${USER}:${USER} requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
-RUN apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
-    npm --prefix ${APPS_DIR}/football_pool install && \
-    pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
-    mkdir ${APPS_DIR}/migrations && \
-    chown 1000:1000 ${APPS_DIR}/migrations
+RUN <<EOF
+apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
+npm --prefix ${APPS_DIR}/football_pool install && \
+pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
+mkdir ${APPS_DIR}/migrations && \
+chown 1000:1000 ${APPS_DIR}/migrations
+EOF
 
-COPY --chown=notroot:notroot ./tailwind.config.js ${APPS_DIR}
-COPY --chown=notroot:notroot ./apps/football_pool ${APPS_DIR}/football_pool
+COPY --chown=${USER}:${USER} ./tailwind.config.js ${APPS_DIR}
+COPY --chown=${USER}:${USER} ./apps/football_pool ${APPS_DIR}/football_pool
 
 # we make sure to run the project as a regular user
 USER ${USER}
