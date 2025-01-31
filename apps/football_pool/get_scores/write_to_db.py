@@ -19,6 +19,8 @@ def write_to_db(current_app: Flask) -> None:
     with current_app.app_context():
         current_app.logger.info("Beginning the writing of the week's results to the database.")
         current_week = get_live_scores()
+        if current_week.is_pro_bowl:  # nobody wins anything on pro bowl week
+            return  # if it's the pro bowl, just exit early
         # if it's Super Bowl week, the winner gets $25
         if current_week.is_super_bowl:
             winners = current_week.get_super_bowl_winners()
