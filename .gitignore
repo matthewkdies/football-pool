@@ -9,3 +9,4 @@ pgdata
 .DS_Store
 cur_week_output.json
 prod/synology_docker_compose.yaml
+json_examples
