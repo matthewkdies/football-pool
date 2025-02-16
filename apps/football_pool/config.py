@@ -43,7 +43,7 @@ class Config(object):
     # Postgres + psycopg2 template
     DB_USER = get_from_secret(Path("/run/secrets/db_user"))
     DB_PASS = get_from_secret(Path("/run/secrets/db_pass"))
-    DB_HOST = "football-pool-postgres"
+    DB_HOST = "football-pool-postgres-local"
     DB_PORT = 5432
     DB_NAME = "football-pool"
 
