@@ -378,7 +378,7 @@ class CurrentWeek:
         Returns:
             bool: Whether the current week is Pro Bowl week.
         """
-        is_pro_bowl = self.season_type == SeasonType.POSTSEASON and self.week == 5
+        is_pro_bowl = self.season_type == SeasonType.POSTSEASON and self.week == 4
         current_app.logger.debug("is_pro_bowl=%s", is_pro_bowl)
         return is_pro_bowl
 
