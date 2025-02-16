@@ -63,7 +63,7 @@ alias python='python3.12'
 alias python3='python3.12'
 
 # install tailwind + daisyui
-npm install -D tailwindcss
+npm install -D tailwindcss @tailwindcss/cli
 npm install -D daisyui@latest
 npm install -D @tailwindcss/typography
 EOF
