@@ -18,10 +18,7 @@ def get_from_secret(secret_file: Path) -> str:
     Returns:
         str: The secret's value.
     """
-    try:
-        return secret_file.read_text().strip()
-    except (PermissionError, FileNotFoundError):
-        return os.environ[secret_file.name.upper()]
+    return secret_file.read_text().strip()
 
 
 # base config class; extend it to your needs.
