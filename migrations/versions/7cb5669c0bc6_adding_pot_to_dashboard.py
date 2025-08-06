@@ -26,10 +26,6 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("id"),
     )
-    with op.batch_alter_table("apscheduler_jobs", schema=None) as batch_op:
-        batch_op.drop_index("ix_apscheduler_jobs_next_run_time")
-
-    op.drop_table("apscheduler_jobs")
 
     op.execute("INSERT INTO pot (amount) VALUES (10)")
     # ### end Alembic commands ###
@@ -46,8 +42,6 @@ def downgrade():
         sa.Column("job_state", postgresql.BYTEA(), autoincrement=False, nullable=False),
         sa.PrimaryKeyConstraint("id", name="apscheduler_jobs_pkey"),
     )
-    with op.batch_alter_table("apscheduler_jobs", schema=None) as batch_op:
-        batch_op.create_index("ix_apscheduler_jobs_next_run_time", ["next_run_time"], unique=False)
 
     op.drop_table("pot")
     # ### end Alembic commands ###

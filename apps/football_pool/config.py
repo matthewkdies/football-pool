@@ -6,7 +6,7 @@ from typing import Dict
 from urllib.parse import quote
 
 PROJECT_NAME = "football-pool"
-DB_URI_TEMPLATE = "postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_URI_TEMPLATE = "postgresql+psycopg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 def get_from_secret(secret_file: Path) -> str:
@@ -37,10 +37,12 @@ class Config(object):
     # SERVER_OPTIONS = {}
     # DATABASE CONFIGURATION
 
-    # Postgres + psycopg2 template
+    # Postgres + psycopg template
     DB_USER = get_from_secret(Path("/run/secrets/db_user"))
     DB_PASS = get_from_secret(Path("/run/secrets/db_pass"))
-    DB_HOST = "football-pool-postgres-local"
+    DB_HOST = "football-pool-postgres"
+    if ENV == "development":
+        DB_HOST += "-local"
     DB_PORT = 5432
     DB_NAME = "football-pool"
 
