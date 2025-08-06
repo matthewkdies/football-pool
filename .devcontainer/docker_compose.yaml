@@ -22,7 +22,7 @@ services:
       - db_pass
 
   football-pool-db:
-    image: postgres:17
+    image: postgres:16
     container_name: football-pool-postgres-local
     hostname: football-pool-postgres-local
     mem_limit: 1g
