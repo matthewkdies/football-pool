@@ -46,6 +46,8 @@ USER ${USER}
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
+ENV UV_LINK_MODE=copy
+
 RUN <<EOF
 uv python install --default 3.13
 uv venv "${VIRTUAL_ENV}"
