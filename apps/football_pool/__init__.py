@@ -3,11 +3,7 @@ from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, render_template, request
-from flask_admin import Admin
-from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
-from flask_security import Security
-from flask_socketio import SocketIO
 
 from .config import Config
 from .get_scores import EST, clean_db, write_to_db
@@ -15,10 +11,6 @@ from .models import db
 from .views import Theme, app_blueprint
 
 migrate = Migrate(db=db)
-admin = Admin()
-ma = Marshmallow()
-security = Security()
-io = SocketIO()
 scheduler = BackgroundScheduler()
 
 
@@ -32,10 +24,6 @@ def create_app(config_filename: Path = None):
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    admin.init_app(app)
-    ma.init_app(app)
-    # security.init_app(app)
-    io.init_app(app)
     scheduler.start()
 
     @app.before_request
