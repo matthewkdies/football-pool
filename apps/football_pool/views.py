@@ -6,7 +6,7 @@ from pathlib import Path
 from flask import Blueprint, Response, current_app, make_response, render_template, request
 
 from .get_scores import get_live_scores
-from .models import Owner, WinningGame, Pot
+from .models import Owner, Pot, WinningGame
 
 __APPPATH = Path(__file__).parent
 
@@ -25,7 +25,8 @@ def index():
     winning_teams = current_week.get_pool_winning_teams()
     if len(winning_teams) >= 16:
         current_app.logger.debug(
-            "It's likely that there aren't 16 teams actually winning the pool. Not rendering winners."
+            "It's likely that there aren't 16 teams actually winning the pool. "
+            "Not rendering winners."
         )
         winning_teams = []
     pot = Pot.query.one()
@@ -68,7 +69,8 @@ class Theme(StrEnum):
     def opposite(self) -> Theme:
         """Returns the opposite theme of the current.
 
-        This is useful for swapping the theme and providing the "other" value when making the checkbox.
+        This is useful for swapping the theme and providing the "other" value
+        when making the checkbox.
 
         Returns:
             Theme: The opposite theme of the current.
