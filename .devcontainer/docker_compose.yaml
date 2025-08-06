@@ -12,17 +12,17 @@ services:
       args:
         IMAGE_NAME: ubuntu
         IMAGE_TAG: 24.04
-      context: ${COMPOSE_DIR}/football-pool/football-pool
+      context: ${GIT_DIR}/football-pool
       dockerfile: ./.devcontainer/devcontainer.dockerfile
     volumes:
-      - ${COMPOSE_DIR}/football-pool/football-pool:/workspace
+      - ${GIT_DIR}/football-pool:/workspace
     secrets:
       - flask_secret_key
       - db_user
       - db_pass
 
   football-pool-db:
-    image: postgres:16
+    image: postgres:17
     container_name: football-pool-postgres-local
     hostname: football-pool-postgres-local
     mem_limit: 1g

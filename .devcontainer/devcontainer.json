@@ -1,3 +1,4 @@
+
 {
 	"dockerComposeFile": [
 		"${localWorkspaceFolder}/.devcontainer/docker_compose.yaml"
@@ -5,12 +6,12 @@
 	"service": "devcontainer",
 	"name": "${localWorkspaceFolderBasename}",
 	"workspaceFolder": "/workspace",
-	"onCreateCommand": "pipx install ruff && npm run build:css",
+	"onCreateCommand": "npm run build:css",
 	"customizations": {
 		"vscode": {
 			"settings": {
 				"[python]": {
-					"editor.defaultFormatter": "charliermarsh.ruff",
+					"editor.defaultFormatter": "charliermarsh.ruff"
 				},
 				"editor.codeActionsOnSave": {
 					"source.organizeImports": "always"
