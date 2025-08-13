@@ -64,4 +64,6 @@ COPY ./pyproject.toml ${PROJECT_DIR}/pyproject.toml
 
 RUN uv sync
 
+LABEL com.centurylinklabs.watchtower.enable="false"
+
 CMD [ "sleep", "infinity" ]
