@@ -10,7 +10,7 @@ from .views import Theme, app_blueprint
 migrate = Migrate(db=db)
 
 
-def create_app(config_filename: Path = None):
+def create_app(config_filename: Path | None = None):
     app = Flask(__name__)
     app.config.from_object(Config)
 
