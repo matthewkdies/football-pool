@@ -99,13 +99,14 @@ class SeasonType(StrEnum):
     POSTSEASON = "POSTSEASON"
 
     @classmethod
-    def _missing_(cls, value: str | int) -> SeasonType:
+    def _missing_(cls, value: str | int) -> SeasonType:  # pyright: ignore[reportIncompatibleMethodOverride]
         if value == 1:
             return SeasonType.PRESEASON
         if value == 2:
             return SeasonType.REGULAR_SEASON
         if value == 3:
             return SeasonType.POSTSEASON
+        raise ValueError
 
 
 class GameStatus(StrEnum):
@@ -117,7 +118,7 @@ class GameStatus(StrEnum):
     FINAL = "STATUS_FINAL"
 
     @classmethod
-    def _missing_(cls, value: str) -> GameStatus:
+    def _missing_(cls, value: str) -> GameStatus:  # pyright: ignore[reportIncompatibleMethodOverride]
         value = value.upper()
         for member in cls:
             if member.value == value:
@@ -308,14 +309,10 @@ class CurrentWeek:
         - Even weeks are least weeks.
         """
         if self.is_super_bowl:
-            current_app.logger.debug(
-                "It's Super Bowl week! The winner is the Super Bowl team's owner."
-            )
+            current_app.logger.debug("It's Super Bowl week! The winner is the Super Bowl team's owner.")
             return WinningType.SUPER_BOWL
         if self.is_postseason:
-            current_app.logger.debug(
-                "It's the postseason. The winners are the winning team's owners."
-            )
+            current_app.logger.debug("It's the postseason. The winners are the winning team's owners.")
             return WinningType.PLAYOFF
         if self.week % 2:
             # it's an odd week
@@ -331,9 +328,9 @@ class CurrentWeek:
         Returns:
             list[Team]: A list of winning teams.
         """
-        if self.is_postseason:
+        if not self.is_regular_season:
             current_app.logger.debug(
-                "It's a postseason week, so there are no most or least winners. Returning empty list."
+                "It's not a regular season week, so there are no most or least winners. Returning empty list."
             )
             return []
         return WINNING_TEAM_FUNC_MAP[self.winning_type](self)
@@ -345,6 +342,17 @@ class CurrentWeek:
             list[Team]: A list of winning teams.
         """
         return find_teams_with_fifty_points(self)
+
+    @property
+    def is_preseason(self) -> bool:
+        """Returns whether the current week is a preseason week or not.
+
+        Returns:
+            bool: Whether the current week is a preseason game.
+        """
+        is_preseason = self.season_type == SeasonType.PRESEASON
+        current_app.logger.debug("is_preseason=%s", is_preseason)
+        return is_preseason
 
     @property
     def is_postseason(self) -> bool:
@@ -399,6 +407,11 @@ class CurrentWeek:
         is_super_bowl = self.season_type == SeasonType.POSTSEASON and self.week == 5
         current_app.logger.debug("is_super_bowl=%s", is_super_bowl)
         return is_super_bowl
+
+    @property
+    def is_regular_season(self) -> bool:
+        """Whether the current week is a regular season week."""
+        return not self.is_preseason and not self.is_postseason
 
     def get_postseason_winners(self) -> list[Team]:
         """Gets the postseason winners, if the week if a postseason week.
@@ -455,7 +468,7 @@ class CurrentWeek:
         Returns:
             set[Team]: A set of Teams that are currently winning the football pool.
         """
-        winning_team_funcs: tuple[Callable[[CurrentWeek], list[Team]]] = (
+        winning_team_funcs: tuple[Callable[[], list[Team]], ...] = (
             self.get_weekly_winning_teams,
             self.get_fifty_point_winners,
             self.get_postseason_winners,
@@ -497,7 +510,8 @@ if __name__ == "__main__":
     app = create_app()
     with app.app_context():
         start_time = time.perf_counter()
-        _ = CurrentWeek.get_from_json(query_json=query_json)
+        current_week = CurrentWeek.get_from_json(query_json=query_json)
         end_time = time.perf_counter()
+        print(current_week.get_pool_winning_teams())
 
     print(f"{round(end_time - start_time, 6)} seconds to get from JSON.")
