@@ -36,6 +36,7 @@
 				},
 				"files.trimTrailingWhitespace": true,
 				"python.formatting.provider": "ruff",
+				"python.defaultInterpreterPath": "/workspace/.venv/bin/python3",
 				"python.testing.pytestEnabled": true,
 				"python.testing.pytestArgs": [
 					"-m not slow"
