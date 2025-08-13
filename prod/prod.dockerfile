@@ -40,4 +40,4 @@ USER ${USER}
 
 WORKDIR ${APPS_DIR}
 
-CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5600", "football_pool:create_app()"]
+CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5600", "--config", "football_pool/gunicorn_config.py", "football_pool:create_app()"]
