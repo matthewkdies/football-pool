@@ -16,8 +16,8 @@ ENV APPS_DIR=/apps \
     TZ=UTC
 
 RUN <<EOF
-sed -i 's/https/http/' /etc/apk/repositories && \
-addgroup --system --gid ${GID} ${USER} && \
+sed -i 's/https/http/' /etc/apk/repositories
+addgroup --system --gid ${GID} ${USER}
 adduser --system --uid ${UID} -G ${USER} ${USER}
 mkdir --parents ${APPS_DIR}/football_pool/
 EOF
@@ -25,10 +25,10 @@ EOF
 COPY --chown=${USER}:${USER} requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
 
 RUN <<EOF
-apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm && \
-npm --prefix ${APPS_DIR}/football_pool install && \
-pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt && \
-mkdir ${APPS_DIR}/migrations && \
+apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm
+npm --prefix ${APPS_DIR}/football_pool install
+pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
+mkdir ${APPS_DIR}/migrations
 chown 1000:1000 ${APPS_DIR}/migrations
 EOF
 
