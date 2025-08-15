@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from .config import Config
 from .models import db
 from .views import Theme, app_blueprint
+from .years import get_current_season_start_year, get_season_str, list_of_tracked_seasons
 
 migrate = Migrate(db=db)
 
@@ -28,6 +29,16 @@ def create_app(config_filename: Path | None = None):
             theme = Theme.get_from_cookie()
             g.theme = theme.value
             g.other_theme = theme.opposite.value
+
+    @app.context_processor
+    def inject_season_year_info():
+        """Make the selected year and tracked years available to all templates"""
+        season_start_year = request.cookies.get("season_start_year")
+        if season_start_year is None:
+            season_start_year = str(get_current_season_start_year())
+        app.logger.debug("COOKIE: season_start_year='%s'", season_start_year)
+        tracked_years_dict = {year: get_season_str(year) for year in list_of_tracked_seasons()}
+        return {"season_start_year": season_start_year, "tracked_years_dict": tracked_years_dict}
 
     @app.errorhandler(404)
     def page_not_found(error):
