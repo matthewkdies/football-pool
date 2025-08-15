@@ -51,8 +51,14 @@ def assignments():
 @app_blueprint.route("/results")
 def results():
     season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
-    winning_games = WinningGame.query.where(WinningGame.season_start_year == season_start_year).all()
-    winning_owners = Owner.query.where(Owner.winnings > 0).order_by(Owner.winnings.desc())
+    winning_games = WinningGame.query.where(WinningGame.season_start_year == season_start_year).order_by(
+        WinningGame.week
+    )
+    winning_owners = (
+        Owner.query.where((Owner.winnings > 0) & (Owner.season_start_year == season_start_year))
+        .order_by(Owner.winnings.desc())
+        .all()
+    )
     return render_template(
         "results.html", winning_games=winning_games, winning_owners=winning_owners, show_year_dropdown=True
     )
