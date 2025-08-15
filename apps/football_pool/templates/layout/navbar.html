@@ -38,19 +38,30 @@
     {% if show_year_dropdown == True %}
       <form
           hx-post="{{ url_for('football_pool.set_year') }}"
-          hx-trigger="change"
           hx-swap="none"
           hx-on::after-request="location.reload()"
-          class="form-control"
+          class="dropdown"
       >
-        <select name="season_start_year" class="select select-bordered select-sm">
+        <!-- Trigger button -->
+        <div tabindex="0" class="btn m-1 bg-base-300">
+          {{ season_start_year }} <img src="https://www.svgrepo.com/show/458529/arrow-drop-down-big.svg" alt="dropdown-arrow" class="w-4 h-4 inline-block ml-1">
+        </div>
+
+        <!-- Dropdown menu -->
+        <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-box z-10 p-2 shadow-sm">
           {% for y, season_span_str in tracked_years_dict.items() %}
-            {% set year_str = y | string %}
-            <option value="{{ year_str }}" {% if year_str == season_start_year %}selected{% endif %}>
+            <li>
+              <button
+                  type="submit"
+                  name="season_start_year"
+                  value="{{ y }}"
+                  class="w-full text-left hover:bg-primary/20"
+              >
                 {{ season_span_str }}
-            </option>
+              </button>
+            </li>
           {% endfor %}
-        </select>
+        </ul>
       </form>
     {% endif %}
     <label class="swap swap-rotate">
