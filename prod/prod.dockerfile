@@ -2,42 +2,45 @@ ARG PYTHON_TAG=3.12-alpine
 
 FROM python:${PYTHON_TAG}
 
-EXPOSE 5600
-
 ARG USER=notroot
-ARG UID
-ARG GID
 
-ENV APPS_DIR=/apps \
-    PYTHONUNBUFFERED=1 \
-    FLASK_APP=football_pool \
-    FLASK_DEBUG=0 \
-    FLASK_ENV=production \
-    TZ=UTC
+ENV APPS_DIR=/apps
+ENV PYTHONUNBUFFERED=1
+ENV FLASK_APP=football_pool
+ENV FLASK_DEBUG=0
+ENV FLASK_ENV=production
+ENV TZ=UTC
+ENV WEB_PORT=5600
+ENV USER_NAME=${USER}
+
+EXPOSE ${WEB_PORT}
 
 RUN <<EOF
 sed -i 's/https/http/' /etc/apk/repositories
-addgroup --system --gid ${GID} ${USER}
-adduser --system --uid ${UID} -G ${USER} ${USER}
-mkdir --parents ${APPS_DIR}/football_pool/
+addgroup --system ${USER}
+adduser --system ${USER}
 EOF
 
-COPY --chown=${USER}:${USER} requirements.txt package.json package-lock.json ${APPS_DIR}/football_pool/
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+ENV UV_LINK_MODE=copy
+
+COPY pyproject.toml package.json package-lock.json ${APPS_DIR}/football_pool/
 
 RUN <<EOF
-apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm
+apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make nodejs npm shadow su-exec
 npm --prefix ${APPS_DIR}/football_pool install
-pip --no-cache-dir install -r ${APPS_DIR}/football_pool/requirements.txt
-mkdir ${APPS_DIR}/migrations
-chown 1000:1000 ${APPS_DIR}/migrations
+uv pip install --system -r ${APPS_DIR}/football_pool/pyproject.toml
 EOF
 
-COPY --chown=${USER}:${USER} ./tailwind.config.js ${APPS_DIR}
-COPY --chown=${USER}:${USER} ./apps/football_pool ${APPS_DIR}/football_pool
-
-# we make sure to run the project as a regular user
-USER ${USER}
+COPY ./tailwind.config.js ${APPS_DIR}
+COPY ./apps/football_pool ${APPS_DIR}/football_pool
+COPY ./migrations ${APPS_DIR}/migrations
+COPY ./prod/entrypoint.sh /entrypoint.sh
 
 WORKDIR ${APPS_DIR}
 
-CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5600", "--config", "football_pool/gunicorn_config.py", "football_pool:create_app()"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD [ "sh", "-c", "gunicorn --workers 4 --bind 0.0.0.0:${WEB_PORT} --config ${APPS_DIR}/football_pool/gunicorn_config.py 'football_pool:create_app()'" ]
+
+# HEALTHCHECK [ ]  # TODO
