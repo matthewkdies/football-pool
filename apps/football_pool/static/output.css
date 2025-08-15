@@ -2277,6 +2277,10 @@
   font-size: var(--text-xl);
   line-height: var(--tw-leading, var(--text-xl--line-height));
 }
+.select-sm {
+  --size: calc(var(--size-field, 0.25rem) * 8);
+  font-size: 0.75rem;
+}
 .font-bold {
   --tw-font-weight: var(--font-weight-bold);
   font-weight: var(--font-weight-bold);
