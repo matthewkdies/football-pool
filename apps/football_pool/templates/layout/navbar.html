@@ -34,7 +34,25 @@
       <li><a href="/assignments">Assignments</a></li>
     </ul>
   </div>
-  <div class="navbar-end">
+  <div class="navbar-end  items-center gap-4">
+    {% if show_year_dropdown == True %}
+      <form
+          hx-post="{{ url_for('football_pool.set_year') }}"
+          hx-trigger="change"
+          hx-swap="none"
+          hx-on::after-request="location.reload()"
+          class="form-control"
+      >
+        <select name="season_start_year" class="select select-bordered select-sm">
+          {% for y, season_span_str in tracked_years_dict.items() %}
+            {% set year_str = y | string %}
+            <option value="{{ year_str }}" {% if year_str == season_start_year %}selected{% endif %}>
+                {{ season_span_str }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    {% endif %}
     <label class="swap swap-rotate">
       <!-- this hidden checkbox controls the state -->
       <input
@@ -44,7 +62,7 @@
         hx-post="/swap-theme-cookie"
         hx-trigger="change"
         hx-swap="none"
-        />
+      />
 
       <!-- sun icon -->
       <svg

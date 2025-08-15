@@ -7,6 +7,7 @@ from flask import Blueprint, Response, current_app, make_response, render_templa
 
 from .get_scores import get_live_scores
 from .models import Owner, Pot, WinningGame
+from .years import get_current_season_start_year
 
 __APPPATH = Path(__file__).parent
 
@@ -40,16 +41,20 @@ def index():
 
 @app_blueprint.route("/assignments")
 def assignments():
-    owners: list[Owner] = sorted(Owner.query.all(), key=lambda x: x.team.name_str)
-    return render_template("assignments.html", owners=owners)
+    season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
+    owners: list[Owner] = sorted(
+        Owner.query.where(Owner.season_start_year == season_start_year).all(), key=lambda x: x.team.name_str
+    )
+    return render_template("assignments.html", owners=owners, show_year_dropdown=True)
 
 
 @app_blueprint.route("/results")
 def results():
-    winning_games = WinningGame.query.all()
+    season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
+    winning_games = WinningGame.query.where(WinningGame.season_start_year == season_start_year).all()
     winning_owners = Owner.query.where(Owner.winnings > 0).order_by(Owner.winnings.desc())
     return render_template(
-        "results.html", winning_games=winning_games, winning_owners=winning_owners
+        "results.html", winning_games=winning_games, winning_owners=winning_owners, show_year_dropdown=True
     )
 
 
