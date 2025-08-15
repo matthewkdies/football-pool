@@ -3,6 +3,8 @@ from flask import Flask
 from ..models import Pot, Team, WinningGame, WinningType, db
 from .query import get_live_scores
 
+NUM_WEEKS_IN_REG_SEASON = 18
+
 
 def week_has_real_winners(winners: list[Team]) -> bool:
     return any(winner.owner is not None for winner in winners)
@@ -50,6 +52,10 @@ def write_to_db(current_app: Flask) -> None:
         current_app.logger.info("50 point winners: %s", [team.abbreviation for team in fifty_point_teams])
 
         # now lets start making the WinningGame objects
+        current_week_num = current_week.week
+        if current_week.is_postseason:
+            current_week_num += NUM_WEEKS_IN_REG_SEASON
+
         winning_games: list[WinningGame] = []
         for team in winners:
             winning_games.append(
