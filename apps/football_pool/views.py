@@ -25,8 +25,7 @@ def index():
     winning_teams = current_week.get_pool_winning_teams()
     if len(winning_teams) >= 16:
         current_app.logger.debug(
-            "It's likely that there aren't 16 teams actually winning the pool. "
-            "Not rendering winners."
+            "It's likely that there aren't 16 teams actually winning the pool. Not rendering winners."
         )
         winning_teams = []
     pot = Pot.query.one()
