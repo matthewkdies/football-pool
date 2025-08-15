@@ -102,6 +102,19 @@ class Theme(StrEnum):
         return Theme(theme_cookie)
 
 
+@app_blueprint.route("/set-year", methods=["POST"])
+def set_year():
+    season_start_year = request.form.get("season_start_year")
+    if not season_start_year or not season_start_year.isdigit():
+        current_app.logger.debug("season_start_year='%s' failed validation.", season_start_year)
+        return "Invalid year", 400
+
+    resp = make_response("")
+    resp.set_cookie("season_start_year", season_start_year)
+    current_app.logger.debug("COOKIE: Set season_start_year='%s'.", season_start_year)
+    return resp
+
+
 @app_blueprint.route("/swap-theme-cookie", methods=["POST"])
 def swap_theme_cookie() -> Response:
     """Handles an HTMX POST to swap the cookie, for storing the theme in the cookies.
