@@ -6,7 +6,7 @@
 
 from gunicorn.arbiter import Arbiter
 
-from apps.football_pool.job_scheduling import schedule_result_computation
+from football_pool.job_scheduling import schedule_result_computation
 
 
 # https://docs.gunicorn.org/en/stable/settings.html#on-starting
