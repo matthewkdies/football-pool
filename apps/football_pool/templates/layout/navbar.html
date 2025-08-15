@@ -44,7 +44,10 @@
       >
         <!-- Trigger button -->
         <div tabindex="0" class="btn m-1 bg-base-300">
-          {{ season_start_year }} <img src="{{ url_for('static', filename='imgs/arrow-drop-down-big.svg') }}" alt="dropdown-arrow" class="w-4 h-4 inline-block ml-1">
+          <!-- TODO: convert below to svg -->
+          {{ season_start_year }} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 inline-block ml-1">
+            <path d="M7 10l5 5 5-5H7z" fill="currentColor"/>
+          </svg>
         </div>
 
         <!-- Dropdown menu -->
