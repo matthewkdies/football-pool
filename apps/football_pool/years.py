@@ -2,6 +2,8 @@
 
 from datetime import datetime
 
+FIRST_SEASON = 2024
+
 
 def get_current_year() -> int:
     """Gets the current year."""
@@ -29,3 +31,11 @@ def get_season_str(season_start_year: int) -> str:
     Example: "2025-26"
     """
     return f"{season_start_year!s}-{str(season_start_year + 1)[2:]}"
+
+
+def list_of_tracked_seasons() -> list[int]:
+    """Gets a list of seasons we've tracked on the website.
+
+    Useful for dropdowns
+    """
+    return list(range(FIRST_SEASON, get_current_season_start_year() + 1))
