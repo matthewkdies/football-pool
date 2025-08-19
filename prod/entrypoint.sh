@@ -19,9 +19,6 @@ if [[ "${OLD_UID}" != "${PUID}" || "${OLD_GID}" != "${PGID}" ]]; then
     find / -group "${OLD_GID}" -exec chown "${PGID}" {} + 2>/dev/null
 fi
 
-echo "INFO: Deleting the 'shadow' pkg..."
-apk del --purge shadow > /dev/null 2>&1 || true
-
 # migrate the database if needed
 echo "INFO: Beginning database migrations..."
 flask db upgrade
