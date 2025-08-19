@@ -12,7 +12,7 @@ fi
 OLD_UID=$(id -u "${USER_NAME}")
 OLD_GID=$(id -g "${USER_NAME}")
 if [[ "${OLD_UID}" != "${PUID}" || "${OLD_GID}" != "${PGID}" ]]; then
-    echo "INFO: Changing IDs of user to (${OLD_UID}:${OLD_GID}) to ${PUID}:${PGID}."
+    echo "INFO: Changing IDs of user from ${OLD_UID}:${OLD_GID} to ${PUID}:${PGID}."
     groupmod --gid "${PGID}" "${USER_NAME}"
     usermod --uid "${PUID}" "${USER_NAME}"
     find / -user "${OLD_UID}" -exec chown "${PUID}" {} + 2>/dev/null
