@@ -62,6 +62,8 @@ EOF
 
 COPY ./pyproject.toml ${PROJECT_DIR}/pyproject.toml
 
+ENV PYTHONPATH=/workspace/apps
+
 RUN uv sync
 
 LABEL com.centurylinklabs.watchtower.enable="false"
