@@ -96,7 +96,7 @@ class Team(db.Model):
             abbr (str): The abbreviation of the desired team.
 
         Returns:
-            Team: The Team with the corresponding appreviation.
+            Team: The Team with the corresponding abbreviation.
         """
         return Team.query.where(Team.abbreviation == abbr).one()
 
