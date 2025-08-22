@@ -1,9 +1,7 @@
 from pathlib import Path
 
 from flask import current_app
-
-from . import db
-from .models import Conference, Division, Owner, Team
+from football_pool.models import Conference, Division, Owner, Team, db
 
 STATIC_DIR = Path(__file__).parent / "static"
 
