@@ -202,6 +202,7 @@ with create_app().app_context():
         team_id=ABBREVIATIONS_TO_TEAMS["NO"].id,
         season_start_year=2025,
     )
+    ANNA.last_name = "Hasman"
     OWNERS.append(ANNA)
 
     DOUG = Owner(
