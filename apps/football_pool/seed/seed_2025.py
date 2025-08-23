@@ -46,7 +46,7 @@ with create_app().app_context():
         first_name="Aaron",
         last_name="Smith",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["ATL"],
+        team_id=ABBREVIATIONS_TO_TEAMS["ATL"].id,
         season_start_year=2025,
     )
     OWNERS.append(AARON)
@@ -55,7 +55,7 @@ with create_app().app_context():
         first_name="Dave",
         last_name="Hasman",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["BAL"],
+        team_id=ABBREVIATIONS_TO_TEAMS["BAL"].id,
         season_start_year=2025,
     )
     OWNERS.append(DAVE)
@@ -64,7 +64,7 @@ with create_app().app_context():
         first_name="Nathan",
         last_name="Smith",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["BUF"],
+        team_id=ABBREVIATIONS_TO_TEAMS["BUF"].id,
         season_start_year=2025,
     )
     OWNERS.append(NATHAN)
@@ -73,7 +73,7 @@ with create_app().app_context():
         first_name="Jeep",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["CAR"],
+        team_id=ABBREVIATIONS_TO_TEAMS["CAR"].id,
         season_start_year=2025,
     )
     OWNERS.append(JEEP)
@@ -82,7 +82,7 @@ with create_app().app_context():
         first_name="Ashley",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["CIN"],
+        team_id=ABBREVIATIONS_TO_TEAMS["CIN"].id,
         season_start_year=2025,
     )
     OWNERS.append(ASHLEY_D)
@@ -91,7 +91,7 @@ with create_app().app_context():
         first_name="Charlotte",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["CLE"],
+        team_id=ABBREVIATIONS_TO_TEAMS["CLE"].id,
         season_start_year=2025,
     )
     OWNERS.append(CHARLOTTE)
@@ -100,7 +100,7 @@ with create_app().app_context():
         first_name="Aidan",
         last_name="Grass",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["DAL"],
+        team_id=ABBREVIATIONS_TO_TEAMS["DAL"].id,
         season_start_year=2025,
     )
     OWNERS.append(AIDAN)
@@ -109,7 +109,7 @@ with create_app().app_context():
         first_name="Kathy",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["DEN"],
+        team_id=ABBREVIATIONS_TO_TEAMS["DEN"].id,
         season_start_year=2025,
     )
     OWNERS.append(KATHY)
@@ -118,7 +118,7 @@ with create_app().app_context():
         first_name="Moira",
         last_name="Healy",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["DET"],
+        team_id=ABBREVIATIONS_TO_TEAMS["DET"].id,
         season_start_year=2025,
     )
     OWNERS.append(MOIRA)
@@ -127,7 +127,7 @@ with create_app().app_context():
         first_name="Madison",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["HOU"],
+        team_id=ABBREVIATIONS_TO_TEAMS["HOU"].id,
         season_start_year=2025,
     )
     OWNERS.append(MADISON)
@@ -136,7 +136,7 @@ with create_app().app_context():
         first_name="Janet",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["IND"],
+        team_id=ABBREVIATIONS_TO_TEAMS["IND"].id,
         season_start_year=2025,
     )
     OWNERS.append(JANET)
@@ -145,7 +145,7 @@ with create_app().app_context():
         first_name="Natalia",
         last_name="Carlson",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["JAX"],
+        team_id=ABBREVIATIONS_TO_TEAMS["JAX"].id,
         season_start_year=2025,
     )
     OWNERS.append(NATALIA)
@@ -154,7 +154,7 @@ with create_app().app_context():
         first_name="Ashley",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["KC"],
+        team_id=ABBREVIATIONS_TO_TEAMS["KC"].id,
         season_start_year=2025,
     )
     OWNERS.append(ASHLEY_L)
@@ -163,7 +163,7 @@ with create_app().app_context():
         first_name="Dennis",
         last_name="Smith",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["LAC"],
+        team_id=ABBREVIATIONS_TO_TEAMS["LAC"].id,
         season_start_year=2025,
     )
     OWNERS.append(DENNIS)
@@ -172,7 +172,7 @@ with create_app().app_context():
         first_name="Pam",
         last_name="Smith",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["MIA"],
+        team_id=ABBREVIATIONS_TO_TEAMS["MIA"].id,
         season_start_year=2025,
     )
     OWNERS.append(PAM)
@@ -181,7 +181,7 @@ with create_app().app_context():
         first_name="Judi",
         last_name="Carlson",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["MIN"],
+        team_id=ABBREVIATIONS_TO_TEAMS["MIN"].id,
         season_start_year=2025,
     )
     OWNERS.append(JUDI)
@@ -190,7 +190,7 @@ with create_app().app_context():
         first_name="Chip",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["NE"],
+        team_id=ABBREVIATIONS_TO_TEAMS["NE"].id,
         season_start_year=2025,
     )
     OWNERS.append(CHIP)
@@ -199,7 +199,7 @@ with create_app().app_context():
         first_name="Anna",
         last_name="Lippincott-Hasman",  # TODO:
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["NO"],
+        team_id=ABBREVIATIONS_TO_TEAMS["NO"].id,
         season_start_year=2025,
     )
     OWNERS.append(ANNA)
@@ -208,7 +208,7 @@ with create_app().app_context():
         first_name="Doug",
         last_name="Carlson",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["NYJ"],
+        team_id=ABBREVIATIONS_TO_TEAMS["NYJ"].id,
         season_start_year=2025,
     )
     OWNERS.append(DOUG)
@@ -217,7 +217,7 @@ with create_app().app_context():
         first_name="Matt",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["LV"],
+        team_id=ABBREVIATIONS_TO_TEAMS["LV"].id,
         season_start_year=2025,
     )
     OWNERS.append(MATT)
@@ -226,7 +226,7 @@ with create_app().app_context():
         first_name="Thomas",
         last_name="Iodice",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["PHI"],
+        team_id=ABBREVIATIONS_TO_TEAMS["PHI"].id,
         season_start_year=2025,
     )
     OWNERS.append(THOMAS)
@@ -235,7 +235,7 @@ with create_app().app_context():
         first_name="Mike",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["PIT"],
+        team_id=ABBREVIATIONS_TO_TEAMS["PIT"].id,
         season_start_year=2025,
     )
     OWNERS.append(MIKE)
@@ -244,7 +244,7 @@ with create_app().app_context():
         first_name="Jeremy",
         last_name="Carlson",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["SF"],
+        team_id=ABBREVIATIONS_TO_TEAMS["SF"].id,
         season_start_year=2025,
     )
     OWNERS.append(JEREMY)
@@ -253,7 +253,7 @@ with create_app().app_context():
         first_name="Janice",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["SEA"],
+        team_id=ABBREVIATIONS_TO_TEAMS["SEA"].id,
         season_start_year=2025,
     )
     OWNERS.append(JANICE)
@@ -262,7 +262,7 @@ with create_app().app_context():
         first_name="Julia",
         last_name="Klein",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["TB"],
+        team_id=ABBREVIATIONS_TO_TEAMS["TB"].id,
         season_start_year=2025,
     )
     OWNERS.append(JULIA)
@@ -271,7 +271,7 @@ with create_app().app_context():
         first_name="Lauryn",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["TEN"],
+        team_id=ABBREVIATIONS_TO_TEAMS["TEN"].id,
         season_start_year=2025,
     )
     OWNERS.append(LAURYN)
@@ -280,7 +280,7 @@ with create_app().app_context():
         first_name="Colin",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["NYG"],
+        team_id=ABBREVIATIONS_TO_TEAMS["NYG"].id,
         season_start_year=2025,
     )
     OWNERS.append(COLIN)
@@ -289,7 +289,7 @@ with create_app().app_context():
         first_name="Missy",
         last_name="Dies",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["ARI"],
+        team_id=ABBREVIATIONS_TO_TEAMS["ARI"].id,
         season_start_year=2025,
     )
     OWNERS.append(MISSY)
@@ -298,13 +298,13 @@ with create_app().app_context():
         first_name="Alex",
         last_name="Lippincott",
         winnings=0,
-        team=ABBREVIATIONS_TO_TEAMS["CHI"],
+        team_id=ABBREVIATIONS_TO_TEAMS["CHI"].id,
         season_start_year=2025,
     )
     OWNERS.append(ALEX)
 
+    # ---
 
-def seed() -> None:
     # confirm number of owners
     if len(OWNERS) != 29:
         raise ValueError("Must be 29 owners.")
