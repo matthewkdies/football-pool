@@ -70,10 +70,7 @@ class Team(db.Model):
     wins: Mapped[int] = db.Column(db.Integer, default=0)
     losses: Mapped[int] = db.Column(db.Integer, default=0)
     ties: Mapped[int] = db.Column(db.Integer, default=0)
-    owner_id: Mapped[int] = db.Column(db.Integer, db.ForeignKey("owners.id"), unique=True)
-    owner: Mapped["Owner"] = db.relationship(
-        "Owner", back_populates="team", uselist=False, foreign_keys=[owner_id], single_parent=True
-    )  # type: ignore
+    owner: Mapped["Owner"] = db.relationship("Owner", backref="team", lazy=True)
 
     def __hash__(self) -> int:
         """Makes the Team class hashable.
@@ -110,7 +107,7 @@ class Owner(db.Model):
     first_name: Mapped[str] = db.Column(db.String, nullable=False)
     last_name: Mapped[str] = db.Column(db.String, nullable=False)
     winnings: Mapped[int] = db.Column(db.Integer, nullable=False, default=0)
-    team: Mapped[Team] = db.relationship("Team", back_populates="owner", uselist=False, single_parent=True)  # type: ignore
+    team_id: Mapped[int] = db.Column(db.Integer, db.ForeignKey("teams.id"))
     season_start_year: Mapped[int] = db.Column(db.Integer, nullable=False)
 
     @property

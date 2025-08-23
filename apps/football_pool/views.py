@@ -42,9 +42,8 @@ def index():
 @app_blueprint.route("/assignments")
 def assignments():
     season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
-    owners: list[Owner] = sorted(
-        Owner.query.where(Owner.season_start_year == season_start_year).all(), key=lambda x: x.team.name_str
-    )
+    cur_year_owners = Owner.query.where(Owner.season_start_year == season_start_year).all()
+    owners: list[Owner] = sorted(cur_year_owners, key=lambda x: x.team.name_str)
     return render_template("assignments.html", owners=owners, show_year_dropdown=True)
 
 
