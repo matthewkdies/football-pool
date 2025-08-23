@@ -21,6 +21,12 @@ services:
       - db_user
       - db_pass
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   football-pool-db:
     image: postgres:17
     container_name: football-pool-postgres-local
