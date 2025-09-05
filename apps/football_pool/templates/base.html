@@ -7,6 +7,13 @@
     <meta name="author" content="Matthew Dies">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- for previews from sites like LinkedIn (hire me), iOS, etc. -->
+    <meta property="og:title" content="Dies Family Football Pool" />
+    <meta property="og:description" content="A dashboard to track the results of the Dies family's football pool, both weekly and over the year!" />
+    <meta property="og:url" content="https://footballpool.mattdies.com" />
+    <meta property="og:image" content="https://footballpool.mattdies.com/static/favicon/android-chrome-512x512.png" />
+    <meta property="og:type" content="website" />
+
     <!-- load the CSS -->
     <link href="{{ url_for('static', filename='output.css') }}" rel="stylesheet">
     {% block styles %}{% endblock %}
