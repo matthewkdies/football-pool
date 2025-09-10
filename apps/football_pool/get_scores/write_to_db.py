@@ -1,6 +1,7 @@
 from flask import Flask
 
 from ..models import Pot, Team, WinningGame, WinningType, db
+from ..years import get_current_season_start_year
 from .query import get_live_scores
 
 NUM_WEEKS_IN_REG_SEASON = 18
@@ -57,6 +58,7 @@ def write_to_db(current_app: Flask) -> None:
             current_week_num += NUM_WEEKS_IN_REG_SEASON
 
         winning_games: list[WinningGame] = []
+        season_start_year = get_current_season_start_year()
         for team in winners:
             winning_games.append(
                 WinningGame(
@@ -64,6 +66,7 @@ def write_to_db(current_app: Flask) -> None:
                     winnings=winnings,
                     winning_type=winning_type,
                     team=team,
+                    season_start_year=season_start_year,
                 )
             )
             if team.owner is not None:
@@ -75,6 +78,7 @@ def write_to_db(current_app: Flask) -> None:
                     winnings=50,
                     winning_type=WinningType.FIFTY,
                     team=team,
+                    season_start_year=season_start_year,
                 )
             )
             if team.owner is not None:
