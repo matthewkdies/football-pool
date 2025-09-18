@@ -7,7 +7,7 @@
     <!-- <h2 align="center">Results So Far</h2> -->
     <h2 align="center">Results So Far</h2>
     <div class="p-4">
-        {% if winning_games %}
+        {% if name_and_winning_game_list %}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Table 1 -->
                 <div class="overflow-x-auto mb-6">
@@ -22,11 +22,13 @@
                         </thead>
                         <tbody>
                             <!-- row per winning game -->
-                            {% for winning_game in winning_games %}
+                            {% for name_winning_game_tuple in name_and_winning_game_list %}
                                 <tr>
+                                    {% set owner_str = name_winning_game_tuple[0] %}
+                                    {% set winning_game = name_winning_game_tuple[1] %}
                                     <td>{{ winning_game.week }}</td>
                                     <td>{{ winning_game.team.name_str }}</td>
-                                    <td>{{ winning_game.team.owner.name_str if winning_game.team.owner.name_str else "No one (rigged)" }}</td>
+                                    <td>{{ owner_str }}</td>
                                     <td>{{ winning_game.winning_type.name_str }}</td>
                                 </tr>
                             {% endfor %}

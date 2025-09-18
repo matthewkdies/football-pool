@@ -42,7 +42,7 @@ def index():
 @app_blueprint.route("/assignments")
 def assignments():
     season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
-    cur_year_owners = Owner.query.where(Owner.season_start_year == season_start_year).all()
+    cur_year_owners: list[Owner] = Owner.query.where(Owner.season_start_year == season_start_year).all()
     owners: list[Owner] = sorted(cur_year_owners, key=lambda x: x.team.name_str)
     return render_template("assignments.html", owners=owners, show_year_dropdown=True)
 
@@ -50,16 +50,26 @@ def assignments():
 @app_blueprint.route("/results")
 def results():
     season_start_year = int(request.cookies.get("season_start_year", get_current_season_start_year()))
-    winning_games = WinningGame.query.where(WinningGame.season_start_year == season_start_year).order_by(
-        WinningGame.week
+    winning_games: list[WinningGame] = (
+        WinningGame.query.where(WinningGame.season_start_year == season_start_year).order_by(WinningGame.week).all()
     )
+    name_and_winning_game_list: list[tuple[str, WinningGame]] = []
+    for winning_game in winning_games:
+        owner: Owner | None = Owner.query.where(
+            (Owner.team_id == winning_game.team_id) & (Owner.season_start_year == season_start_year)
+        ).one_or_none()
+        winning_owner_str = owner.name_str if owner else "No one (Rigged!!!)"
+        name_and_winning_game_list.append((winning_owner_str, winning_game))
     winning_owners = (
         Owner.query.where((Owner.winnings > 0) & (Owner.season_start_year == season_start_year))
         .order_by(Owner.winnings.desc())
         .all()
     )
     return render_template(
-        "results.html", winning_games=winning_games, winning_owners=winning_owners, show_year_dropdown=True
+        "results.html",
+        name_and_winning_game_list=name_and_winning_game_list,
+        winning_owners=winning_owners,
+        show_year_dropdown=True,
     )
 
 
