@@ -55,7 +55,7 @@ uv tool install pre-commit
 uv tool install ruff
 
 # install tailwind + daisyui
-npm install -D tailwindcss @tailwindcss/cli
+npm install tailwindcss @tailwindcss/cli
 npm install -D daisyui@latest
 npm install -D @tailwindcss/typography
 EOF

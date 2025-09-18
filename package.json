@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.11",
+    "@tailwindcss/cli": "^4.1.13",
     "@tailwindcss/typography": "^0.5.16",
     "daisyui": "^5.0.50",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.13"
   },
   "scripts": {
     "build:css": "tailwindcss -i ./apps/football_pool/static/input.css -o ./apps/football_pool/static/output.css"
