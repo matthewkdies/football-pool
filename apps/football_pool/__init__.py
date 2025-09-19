@@ -40,6 +40,21 @@ def create_app(config_filename: Path | None = None):
         tracked_years_dict = {year: get_season_str(year) for year in list_of_tracked_seasons()}
         return {"season_start_year": season_start_year, "tracked_years_dict": tracked_years_dict}
 
+    # makes the following objects in the dictionary available in a `flask shell` without import
+    @app.shell_context_processor
+    def make_shell_context():
+        from .get_scores import get_live_scores
+        from .models import Owner, Pot, Team, WinningGame
+
+        return {
+            "db": db,
+            "Team": Team,
+            "Owner": Owner,
+            "WinningGame": WinningGame,
+            "Pot": Pot,
+            "get_live_scores": get_live_scores,
+        }
+
     @app.errorhandler(404)
     def page_not_found(error):
         """Handles a 404 error to render the 404 template."""
