@@ -160,7 +160,7 @@ class Game:
             else:
                 display_clock = event["status"]["displayClock"]
                 quarter = int(event["status"]["period"])
-            home_idx = 0 if event["competitions"][0]["competitors"][0]["homeAway"] == 0 else 1
+            home_idx = 0 if event["competitions"][0]["competitors"][0]["homeAway"] == "home" else 1
             away_idx = 1 - home_idx
             home_dict = event["competitions"][0]["competitors"][home_idx]
             away_dict = event["competitions"][0]["competitors"][away_idx]
