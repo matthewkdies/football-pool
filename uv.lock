@@ -211,6 +211,7 @@ version = "1.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "alembic" },
+    { name = "flask" },
     { name = "flask-apscheduler" },
     { name = "flask-migrate" },
     { name = "gunicorn" },
@@ -229,6 +230,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "alembic", specifier = ">=1.16.4" },
+    { name = "flask", specifier = ">=3.1.1" },
     { name = "flask-apscheduler", specifier = ">=1.13.1" },
     { name = "flask-migrate", specifier = ">=4.1.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
