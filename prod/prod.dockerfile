@@ -6,7 +6,7 @@ ARG USER=notroot
 
 ENV APPS_DIR=/apps
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_APP=football_pool
+ENV FLASK_APP=football_pool:create_app
 ENV FLASK_DEBUG=0
 ENV FLASK_ENV=production
 ENV TZ=UTC
