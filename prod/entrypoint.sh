@@ -11,12 +11,13 @@ fi
 # change UID and GID as needed
 OLD_UID=$(id -u "${USER_NAME}")
 OLD_GID=$(id -g "${USER_NAME}")
-if [[ "${OLD_UID}" != "${PUID}" || "${OLD_GID}" != "${PGID}" ]]; then
-    echo "INFO: Changing IDs of user from ${OLD_UID}:${OLD_GID} to ${PUID}:${PGID}."
-    groupmod --gid "${PGID}" "${USER_NAME}" || echo "No GID changes necessary."
-    usermod --uid "${PUID}" "${USER_NAME}" || echo "No UID changes necessary."
-    find / -user "${OLD_UID}" -exec chown "${PUID}" {} + 2>/dev/null
+if [[ "${OLD_GID}" != "${PGID}" ]]; then
+    groupmod --gid "${PGID}" "${USER_NAME}"
     find / -group "${OLD_GID}" -exec chown "${PGID}" {} + 2>/dev/null
+fi
+if [[ "${OLD_UID}" != "${PUID}" ]]; then
+    usermod --uid "${PUID}" "${USER_NAME}"
+    find / -user "${OLD_UID}" -exec chown "${PUID}" {} + 2>/dev/null
 fi
 
 # migrate the database if needed
