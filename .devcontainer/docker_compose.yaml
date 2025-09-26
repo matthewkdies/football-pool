@@ -12,10 +12,10 @@ services:
       args:
         IMAGE_NAME: ubuntu
         IMAGE_TAG: 24.04
-      context: ${GIT_DIR}/football-pool
+      context: ${GIT_REPOS_DIR}/football-pool
       dockerfile: ./.devcontainer/devcontainer.dockerfile
     volumes:
-      - ${GIT_DIR}/football-pool:/workspace
+      - ${GIT_REPOS_DIR}/football-pool:/workspace
     secrets:
       - flask_secret_key
       - db_user
@@ -36,7 +36,13 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ["CMD", "sh", "-c", "pg_isready -q -d football-pool -U $(cat /run/secrets/db_user)"]
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "pg_isready -q -d football-pool -U $(cat /run/secrets/db_user)",
+        ]
       timeout: 45s
       interval: 10s
       retries: 10
