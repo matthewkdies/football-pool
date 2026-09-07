@@ -1,12 +1,12 @@
 
 {
+	"name": "football-pool-dev",
 	"dockerComposeFile": [
-		"${localWorkspaceFolder}/.devcontainer/docker_compose.yaml"
+		"docker_compose.yaml"
 	],
 	"service": "devcontainer",
-	"name": "${localWorkspaceFolderBasename}",
 	"workspaceFolder": "/workspace",
-	"onCreateCommand": "npm run build:css",
+	"postCreateCommand": "uv sync && prek install && npm run build",
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -14,7 +14,7 @@
 					"editor.defaultFormatter": "charliermarsh.ruff"
 				},
 				"editor.codeActionsOnSave": {
-					"source.organizeImports": "always"
+					"source.organizeImports": "explicit"
 				},
 				"editor.bracketPairColorization.enabled": true,
 				"editor.guides.bracketPairs": "active",
@@ -23,34 +23,29 @@
 				"files.autoSaveDelay": 1000,
 				"files.exclude": {
 					"**/.git": true,
-					"**/.svn": true,
-					"**/.hg": true,
-					"**/CVS": true,
 					"**/.DS_Store": true,
 					"**/Thumbs.db": true,
 					"**/__pycache__": true,
 					"**/.pytest_cache": true,
-					"**/mypy_cache": true,
+					"**/.mypy_cache": true,
+					"**/.ruff_cache": true,
+					"**/.coverage": true,
 					"**/pgdata": true,
-					"**/.ruff_cache": true
+					"**/*.tsbuildinfo": true
 				},
 				"files.trimTrailingWhitespace": true,
-				"python.formatting.provider": "ruff",
-				"python.defaultInterpreterPath": "/workspace/.venv/bin/python3",
+				"python.defaultInterpreterPath": "/workspace/.venv/bin/python",
 				"python.testing.pytestEnabled": true,
 				"python.testing.pytestArgs": [
 					"-m not slow"
 				]
 			},
 			"extensions": [
-				"astral-sh.ty",
-				"eamodio.gitlens",
 				"charliermarsh.ruff",
 				"ms-python.python",
-				"njpwerner.autodocstring",
-				"ritwickdey.liveserver",
-				"ryanluker.vscode-coverage-gutters",
-				"tamasfe.even-better-toml"
+				"tamasfe.even-better-toml",
+				"bradlc.vscode-tailwindcss",
+				"ryanluker.vscode-coverage-gutters"
 			]
 		}
 	}

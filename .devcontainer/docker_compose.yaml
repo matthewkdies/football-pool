@@ -20,12 +20,17 @@ services:
       - secret_key
       - db_user
       - db_pass
+    depends_on:
+      football-pool-db:
+        condition: service_healthy
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      - football-pool-db
 
   football-pool-db:
     image: postgres:17
@@ -36,20 +41,13 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test:
-        [
-          "CMD",
-          "sh",
-          "-c",
-          "pg_isready -q -d football-pool -U $(cat /run/secrets/db_user)",
-        ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-football-pool}"]
+      timeout: 10s
+      interval: 5s
+      retries: 5
     volumes:
       - football-pool-localdb:/var/lib/postgresql/data:rw
     secrets:
-      - secret_key
       - db_user
       - db_pass
     environment:

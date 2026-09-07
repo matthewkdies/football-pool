@@ -1,12 +1,38 @@
+# Python
+.venv
 venv
 __pycache__
-.mypy_cache
-.vscode
-secrets
-node_modules
-pgdata
+*.py[cod]
+*$py.class
+.pytest_cache
 .ruff_cache
-.DS_Store
+.mypy_cache
+.coverage
+htmlcov
+
+# Node & Frontend
+node_modules
+*.tsbuildinfo
+npm-debug.log*
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+secrets
+
+# Databases, state, and logs
+*.sqlite
+*.sqlite3
+*.db
+pgdata
 cur_week_output.json
-prod/synology_docker_compose.yaml
 json_examples
+*.log
+.prek
+
+# IDE & OS
+.vscode
+.DS_Store
+Thumbs.db
+prod/synology_docker_compose.yaml

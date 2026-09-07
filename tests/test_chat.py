@@ -1,19 +1,18 @@
 """Tests for chat history, WebSocket broadcasting, and family-friendly moderation."""
 
 import pytest
+from fastapi import FastAPI
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from starlette.testclient import TestClient
 
 from apps.football_pool.api.auth import router as auth_router
 from apps.football_pool.api.chat import router as chat_router
 from apps.football_pool.config import settings
-from apps.football_pool.database import get_db
+from apps.football_pool.database import Base, get_db
 from apps.football_pool.models import ChatMessage, Member
 from apps.football_pool.services.moderation import censor_message
 from apps.football_pool.utils.security import create_session_token
-from fastapi import FastAPI
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from apps.football_pool.database import Base
 
 
 def test_profanity_moderation_censor():
@@ -36,6 +35,7 @@ def chat_app_and_db(tmp_path):
     session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     import asyncio
+
     async def init():
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
@@ -58,9 +58,14 @@ def chat_app_and_db(tmp_path):
 
     # Patch async_session_factory used in chat websocket endpoint
     import apps.football_pool.api.chat as chat_module
+
+    orig_factory = chat_module.async_session_factory
     chat_module.async_session_factory = session_factory
 
-    return app, session_factory
+    yield app, session_factory
+
+    chat_module.async_session_factory = orig_factory
+    asyncio.run(engine.dispose())
 
 
 def test_websocket_chat_unclaimed(chat_app_and_db):
@@ -103,6 +108,7 @@ def test_websocket_chat_claimed_and_moderated(chat_app_and_db):
 
     # Verify message was persisted to DB
     import asyncio
+
     async def verify_db():
         async with session_factory() as session:
             result = await session.execute(select(ChatMessage))
@@ -119,6 +125,7 @@ def test_chat_history_rest_endpoint(chat_app_and_db):
 
     # Seed 2 messages
     import asyncio
+
     async def seed_msgs():
         async with session_factory() as session:
             session.add(ChatMessage(member_id=1, content="Message 1"))
@@ -164,10 +171,12 @@ def test_post_chat_message_authenticated_and_moderated(chat_app_and_db):
 
     # Verify persisted in database
     import asyncio
+
     async def verify_persisted():
         async with session_factory() as session:
             result = await session.execute(select(ChatMessage).where(ChatMessage.id == data["id"]))
             msg = result.scalar_one_or_none()
             assert msg is not None
             assert "****" in msg.content
+
     asyncio.run(verify_persisted())
