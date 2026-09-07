@@ -19,5 +19,3 @@ RICHARD = Owner(
 )
 db.session.add(RICHARD)
 db.session.commit()
-
-

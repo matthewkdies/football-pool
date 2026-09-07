@@ -1,6 +1,6 @@
 from flask import Flask
 
-from ..models import Pot, Team, WinningGame, WinningType, db
+from ...models import Pot, Team, WinningGame, WinningType, db
 from ..years import get_current_season_start_year
 from .query import get_live_scores
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
 
-    from .. import create_app
+    from ... import create_app
 
     app = create_app()
 

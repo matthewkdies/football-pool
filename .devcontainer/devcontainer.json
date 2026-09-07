@@ -43,10 +43,10 @@
 				]
 			},
 			"extensions": [
+				"astral-sh.ty",
 				"eamodio.gitlens",
 				"charliermarsh.ruff",
 				"ms-python.python",
-				"ms-python.vscode-pylance",
 				"njpwerner.autodocstring",
 				"ritwickdey.liveserver",
 				"ryanluker.vscode-coverage-gutters",

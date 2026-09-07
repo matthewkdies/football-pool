@@ -1,24 +1,29 @@
 [project]
 name = "football_pool"
-version = "1.1.0"
-description = "A Flask app for a website tracking the results/history of my family's football pool."
-requires-python = ">=3.10"
+version = "2.0.0"
+description = "A modern asynchronous FastAPI backend for tracking the results/history of the football pool."
+requires-python = ">=3.12"
 dependencies = [
-    "alembic>=1.16.4",
-    "flask>=3.1.1",
-    "flask-apscheduler>=1.13.1",
-    "flask-migrate>=4.1.0",
-    "gunicorn>=23.0.0",
-    "psycopg[c]>=3.2.9",
-    "pydantic>=2.11.7",
+    "aiosqlite>=0.21.0",
+    "alembic>=1.14.1",
+    "asyncpg>=0.30.0",
+    "better-profanity>=0.7.0",
+    "fastapi>=0.115.11",
+    "httpx>=0.28.1",
+    "itsdangerous>=2.2.0",
+    "psycopg[binary]>=3.2.5",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.1",
     "pytz>=2025.2",
-    "requests>=2.32.4",
+    "sqlalchemy[asyncio]>=2.0.38",
     "tzdata>=2025.2",
+    "uvicorn[standard]>=0.34.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.4.1",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
 ]
 
 [tool.ruff]
@@ -28,10 +33,10 @@ include = ["apps", "migrations", "tests"]
 
 [tool.ruff.lint]
 select = [
-    "E",  # pycodestyle errors
-    "F",  # Pyflakes
-    "I",  # isort
-    "W",  # pycodestyle warnings
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes
+    "I",   # isort
+    "W",   # pycodestyle warnings
     "C90", # mccabe complexity
 ]
 ignore = []

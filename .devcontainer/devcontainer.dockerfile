@@ -58,6 +58,9 @@ uv tool install ruff
 npm install tailwindcss @tailwindcss/cli
 npm install -D daisyui@latest
 npm install -D @tailwindcss/typography
+
+# install agy CLI
+curl -fsSL https://antigravity.google/cli/install.sh | bash
 EOF
 
 COPY ./pyproject.toml ${PROJECT_DIR}/pyproject.toml

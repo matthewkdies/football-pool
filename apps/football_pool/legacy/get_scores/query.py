@@ -17,7 +17,7 @@ def get_live_scores(url: str = DEFAULT_URL, params: dict = DEFAULT_PARAMS) -> Cu
 if __name__ == "__main__":
     import time
 
-    from ...football_pool import create_app
+    from ... import create_app
 
     app = create_app()
     with app.app_context():

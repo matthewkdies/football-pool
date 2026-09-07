@@ -1,10 +1,11 @@
 """Contains scheduled jobs run with 'apscheduler'."""
 
+from apps.football_pool.legacy.get_scores import EST
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from football_pool import create_app
-from football_pool.get_scores import EST, write_to_db
+from football_pool.get_scores import write_to_db
 
 
 def schedule_result_computation() -> None:

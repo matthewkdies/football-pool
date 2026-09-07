@@ -1,129 +1,107 @@
-import logging
+"""Application configuration using Pydantic BaseSettings with file/env secret fallback."""
+
+from __future__ import annotations
+
 import os
-from datetime import timedelta
 from pathlib import Path
-from typing import Dict
-from urllib.parse import quote
+from urllib.parse import quote_plus
 
-PROJECT_NAME = "football-pool"
-DB_URI_TEMPLATE = "postgresql+psycopg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def get_from_secret(secret_file: Path) -> str:
-    """Tries to get a secret from a secrets file, falls back to env var.
+def get_secret(secret_name: str, env_var: str | None = None, default: str = "") -> str:
+    """Read a secret from /run/secrets/{secret_name}, falling back to env var, then default.
 
     Args:
-        secret_file (Path): The path to the secret file.
+        secret_name: Name of the secret file under /run/secrets.
+        env_var: Optional environment variable name (defaults to secret_name.upper()).
+        default: Fallback string value if secret is not found.
 
     Returns:
-        str: The secret's value.
+        The secret value as a stripped string.
     """
-    return secret_file.read_text().strip()
+    secret_path = Path(f"/run/secrets/{secret_name}")
+    if secret_path.is_file():
+        try:
+            val = secret_path.read_text(encoding="utf-8").strip()
+            if val:
+                return val
+        except OSError:
+            pass
+
+    target_env = env_var or secret_name.upper()
+    env_val = os.getenv(target_env)
+    if env_val is not None and env_val.strip():
+        return env_val.strip()
+
+    return default
 
 
-# base config class; extend it to your needs.
-class Config(object):
-    # see http://flask.pocoo.org/docs/1.0/config/#environment-and-debug-features
-    ENV = os.getenv("FLASK_ENV", "production")
-    DEBUG = os.getenv("FLASK_DEBUG", "0") == "1"
+class Settings(BaseSettings):
+    """Global configuration settings for the football-pool application."""
 
-    # use TESTING mode?
-    TESTING = False
-
-    # use server x-sendfile?
-    USE_X_SENDFILE = False
-
-    # use to set werkzeug / socketio options, if needed
-    # SERVER_OPTIONS = {}
-    # DATABASE CONFIGURATION
-
-    # Postgres + psycopg template
-    DB_USER = get_from_secret(Path("/run/secrets/db_user"))
-    DB_PASS = get_from_secret(Path("/run/secrets/db_pass"))
-    DB_HOST = "football-pool-postgres"
-    if ENV == "development":
-        DB_HOST += "-local"
-    DB_PORT = 5432
-    DB_NAME = "football-pool"
-
-    # default database connection
-    SQLALCHEMY_DATABASE_URI = DB_URI_TEMPLATE.format(
-        DB_USER=DB_USER,
-        DB_PASS=quote(DB_PASS),
-        DB_HOST=DB_HOST,
-        DB_PORT=DB_PORT,
-        DB_NAME=DB_NAME,
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
-    # set this up case you need multiple database connections
-    SQLALCHEMY_BINDS: Dict = {}
+    env: str = Field(default_factory=lambda: os.getenv("APP_ENV", os.getenv("FLASK_ENV", "production")))
+    debug: bool = Field(default_factory=lambda: os.getenv("DEBUG", "0") in ("1", "true", "True"))
 
-    # log all the statements issued to stderr?
-    SQLALCHEMY_ECHO = DEBUG
-    # track and emit signals on object modification?
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
-    WTF_CSRF_ENABLED = True
-    # import os; os.urandom(24)
-    SECRET_KEY = get_from_secret(Path("/run/secrets/flask_secret_key"))
+    # Database
+    db_user: str = Field(default_factory=lambda: get_secret("db_user", "POSTGRES_USER", "postgres"))
+    db_pass: str = Field(default_factory=lambda: get_secret("db_pass", "POSTGRES_PASSWORD", "postgres"))
+    db_host: str = Field(default_factory=lambda: os.getenv("DB_HOST", "football-pool-postgres"))
+    db_port: int = Field(default_factory=lambda: int(os.getenv("DB_PORT", "5432")))
+    db_name: str = Field(default_factory=lambda: os.getenv("DB_NAME", "football-pool"))
+    database_url: str | None = Field(default_factory=lambda: os.getenv("DATABASE_URL"))
 
-    # LOGGING
-    LOGGER_NAME = "%s_log" % PROJECT_NAME
-    LOG_FILENAME = "/var/tmp/app.%s.log" % PROJECT_NAME
-    LOG_LEVEL = logging.INFO
-    # used by logging.Formatter
-    LOG_FORMAT = "%(asctime)s %(levelname)s\t: %(message)s"
-
-    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
-
-    # EMAIL CONFIGURATION
-    MAIL_DEBUG = DEBUG
-    MAIL_SERVER = os.getenv("FLASK_MAIL_SERVER", "localhost")
-    MAIL_PORT = int(os.getenv("FLASK_MAIL_PORT", "25"))
-    MAIL_USE_TLS = os.getenv("FLASK_MAIL_USE_TLS", "") == "1"
-    MAIL_USE_SSL = os.getenv("FLASK_MAIL_USE_SSL", "") == "1"
-    MAIL_USERNAME = os.getenv("FLASK_MAIL_USERNAME", None)
-    MAIL_PASSWORD = os.getenv("FLASK_MAIL_PASSWORD", None)
-    DEFAULT_MAIL_SENDER = os.getenv("FLASK_DEFAULT_MAIL_SENDER", "example@%s.com" % PROJECT_NAME)
-
-    # these are the modules preemptively
-    # loaded for each app
-    # LOAD_MODULES_EXTENSIONS = ["views", "models", "admin"]
-
-    # add below the module path of extensions
-    # you wish to load
-    # EXTENSIONS = [
-    #     ".extensions.db",
-    #     ".extensions.migrate",
-    #     ".extensions.security",
-    #     ".extensions.admin",
-    #     ".extensions.ma",
-    #     ".extensions.io",
-    # ]
-
-    # see example/ for reference
-    # ex: BLUEPRINTS = ['blog']  # where `blog` is a Blueprint instance
-    # ex: BLUEPRINTS = [('blog', {'url_prefix': '/myblog'})]  # where `blog` is a Blueprint instance
-    # BLUEPRINTS: List = []
-
-
-# config class for development environment
-class Dev(Config):
-    MAIL_DEBUG = True
-    # EXTENSIONS = Config.EXTENSIONS + ["extensions.toolbar"]
-    # uses sqlite by default
-    SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/%s.db" % Config.DB_NAME
-
-
-# config class used during tests
-class Test(Config):
-    TESTING = True
-    WTF_CSRF_ENABLED = False
-    SQLALCHEMY_ECHO = False
-    SQLALCHEMY_DATABASE_URI = DB_URI_TEMPLATE.format(
-        DB_USER=Config.DB_USER,
-        DB_PASS=Config.DB_PASS,
-        DB_HOST=Config.DB_HOST,
-        DB_PORT=Config.DB_PORT,
-        DB_NAME=f"{Config.DB_NAME}-test",
+    # Security / Auth
+    secret_key: str = Field(
+        default_factory=lambda: get_secret(
+            "flask_secret_key",
+            "APP_SECRET_KEY",
+            "dev-insecure-secret-key-change-in-prod",
+        )
     )
+    session_cookie_name: str = "fp_session"
+    session_max_age_seconds: int = 31_536_000  # 1 year
+
+    # ESPN API & Poller
+    espn_api_url: str = "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+    poll_interval_active_seconds: int = 60
+    poll_interval_upcoming_seconds: int = 300
+    poll_interval_idle_seconds: int = 900
+    poll_interval_offseason_seconds: int = 3600
+
+    # CORS
+    cors_origins: list[str] = ["*"]
+
+    @property
+    def async_database_url(self) -> str:
+        """Constructs an async SQLAlchemy database URL."""
+        if self.database_url:
+            url = self.database_url
+            if url.startswith("postgres://"):
+                url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif url.startswith("postgresql://"):
+                url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return url
+
+        host = self.db_host
+        if self.env == "development" and not host.endswith("-local") and host == "football-pool-postgres":
+            host = f"{host}-local"
+
+        user = quote_plus(self.db_user)
+        pwd = quote_plus(self.db_pass)
+        return f"postgresql+asyncpg://{user}:{pwd}@{host}:{self.db_port}/{self.db_name}"
+
+    @property
+    def is_production(self) -> bool:
+        """Checks if current environment is production."""
+        return self.env == "production"
+
+
+settings = Settings()

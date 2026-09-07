@@ -9,7 +9,7 @@ from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 from pytz import timezone
 
-from ..models import Team, WinningType
+from ...models import Team, WinningType
 from .exceptions import GameNotOverError, GameTiedError
 
 EST = timezone("US/Eastern")
@@ -505,7 +505,7 @@ if __name__ == "__main__":
 
     import time
 
-    from ...football_pool import create_app
+    from ... import create_app
 
     app = create_app()
     with app.app_context():

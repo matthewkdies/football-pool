@@ -7,14 +7,14 @@ secrets:
     file: ../secrets/db_pass.txt
 
 services:
-  flask_app:
+  app:
     container_name: football_pool
     restart: 'unless-stopped'
     expose:
       - 5600
     build:
       args:
-        PYTHON_TAG: 3-alpine
+        PYTHON_TAG: 3.13-alpine
       context: ..
       dockerfile: ./prod/prod.dockerfile
       secrets:
