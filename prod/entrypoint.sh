@@ -22,8 +22,7 @@ fi
 
 # migrate the database if needed
 echo "INFO: Beginning database migrations..."
-flask db upgrade
-flask db stamp head
+alembic upgrade head
 echo "INFO: Completed database migrations!"
 
 # start the app

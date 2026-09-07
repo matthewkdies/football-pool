@@ -1,15 +1,9 @@
 {
-  "devDependencies": {
-    "@tailwindcss/cli": "^4.1.13",
-    "@tailwindcss/typography": "^0.5.16",
-    "daisyui": "^5.0.50",
-    "tailwindcss": "^4.1.13"
-  },
+  "name": "football-pool",
+  "private": true,
   "scripts": {
-    "build:css": "tailwindcss -i ./apps/football_pool/static/input.css -o ./apps/football_pool/static/output.css"
-  },
-  "dependencies": {
-    "@tailwindcss/typography": "^0.5.15",
-    "daisyui": "^5.0.50"
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview"
   }
 }

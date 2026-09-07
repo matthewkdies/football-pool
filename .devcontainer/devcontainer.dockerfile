@@ -11,11 +11,10 @@ ENV HOME=/home/${USER}
 ENV PROJECT_DIR=/workspace
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_APP=football_pool:create_app
-ENV FLASK_DEBUG=1
-ENV FLASK_ENV=development
+ENV APP_ENV=development
+ENV DEBUG=1
 ENV VIRTUAL_ENV=${PROJECT_DIR}/.venv
-ENV PATH=${VIRTUAL_ENV}/bin:${PATH}:${PROJECT_DIR}
+ENV PATH=${VIRTUAL_ENV}/bin:${HOME}/.local/bin:${PATH}:${PROJECT_DIR}
 
 WORKDIR ${PROJECT_DIR}
 
@@ -51,16 +50,14 @@ ENV UV_LINK_MODE=copy
 RUN <<EOF
 uv python install --default 3.13
 uv venv "${VIRTUAL_ENV}"
-uv tool install pre-commit
+uv tool install prek
 uv tool install ruff
 
-# install tailwind + daisyui
-npm install tailwindcss @tailwindcss/cli
-npm install -D daisyui@latest
-npm install -D @tailwindcss/typography
+# install agy CLI
+curl -fsSL https://antigravity.google/cli/install.sh | bash
 EOF
 
-COPY ./pyproject.toml ${PROJECT_DIR}/pyproject.toml
+COPY ./pyproject.toml ./uv.lock* ${PROJECT_DIR}/
 
 ENV PYTHONPATH=/workspace/apps
 

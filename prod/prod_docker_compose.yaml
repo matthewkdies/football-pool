@@ -1,28 +1,28 @@
 secrets:
-  flask_secret_key:
-    file: ../secrets/flask_secret_key.txt
+  secret_key:
+    file: ../secrets/secret_key.txt
   db_user:
     file: ../secrets/db_user.txt
   db_pass:
     file: ../secrets/db_pass.txt
 
 services:
-  flask_app:
+  app:
     container_name: football_pool
     restart: 'unless-stopped'
     expose:
       - 5600
     build:
       args:
-        PYTHON_TAG: 3-alpine
+        PYTHON_TAG: 3.13-alpine
       context: ..
       dockerfile: ./prod/prod.dockerfile
       secrets:
-        - flask_secret_key
+        - secret_key
         - db_user
         - db_pass
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
 
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data:rw
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
     environment:
