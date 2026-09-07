@@ -13,22 +13,38 @@ interface SeasonContextType {
 const SeasonContext = createContext<SeasonContextType | undefined>(undefined);
 
 export function SeasonProvider({ children }: { children: ReactNode }) {
+  const currentDefaultYear =
+    new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+
   const [seasonsData, setSeasonsData] = useState<SeasonsResponse | null>(null);
-  const [selectedSeason, setSelectedSeason] = useState<number>(2025);
+  const [selectedSeason, setSelectedSeason] = useState<number>(currentDefaultYear);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [hasUserSelected, setHasUserSelected] = useState<boolean>(false);
+
+  const handleSetSelectedSeason = useCallback((season: number) => {
+    setHasUserSelected(true);
+    setSelectedSeason(season);
+  }, []);
 
   const refreshSeasons = useCallback(async () => {
     try {
       const data = await poolApi.getSeasons();
       setSeasonsData(data);
-      setSelectedSeason((prev) => (data.tracked_seasons.includes(prev) ? prev : data.current_season));
+      if (!hasUserSelected) {
+        setSelectedSeason(data.current_season);
+      } else {
+        setSelectedSeason((prev) => (data.tracked_seasons.includes(prev) ? prev : data.current_season));
+      }
     } catch {
       // Fallback
-      setSeasonsData({ current_season: 2025, tracked_seasons: [2024, 2025] });
+      setSeasonsData({ current_season: currentDefaultYear, tracked_seasons: [2024, 2025, currentDefaultYear] });
+      if (!hasUserSelected) {
+        setSelectedSeason(currentDefaultYear);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [currentDefaultYear, hasUserSelected]);
 
   useEffect(() => {
     refreshSeasons();
@@ -39,7 +55,7 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
       value={{
         seasonsData,
         selectedSeason,
-        setSelectedSeason,
+        setSelectedSeason: handleSetSelectedSeason,
         isLoading,
         refreshSeasons,
       }}
