@@ -24,6 +24,8 @@ TEAM_MAP: dict[str, TeamSummary] = {
         name=team["name"],
         full_name=f"{team['city']} {team['name']}",
         logo_url=team["logo_url"],
+        conference=str(team["conference"].value if hasattr(team["conference"], "value") else team["conference"]),
+        division=str(team["division"].value if hasattr(team["division"], "value") else team["division"]),
     )
     for team in TEAMS_DATA
 }  # ty: ignore[invalid-assignment]
