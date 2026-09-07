@@ -6,6 +6,8 @@
     "tailwindcss": "^4.1.13"
   },
   "scripts": {
+    "build:frontend": "npm --prefix frontend run build",
+    "dev:frontend": "npm --prefix frontend run dev",
     "build:css": "tailwindcss -i ./apps/football_pool/static/input.css -o ./apps/football_pool/static/output.css"
   },
   "dependencies": {

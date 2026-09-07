@@ -5,9 +5,12 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from .api.auth import router as auth_router
 from .api.chat import router as chat_router
@@ -68,20 +71,51 @@ def create_app() -> FastAPI:
     app.include_router(pool_router)
     app.include_router(chat_router)
 
+    # Static assets and SPA distribution
+    static_dir = Path(__file__).parent / "static"
+    dist_dir = static_dir / "dist"
+    dist_assets = dist_dir / "assets"
+    dist_index = dist_dir / "index.html"
+
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    if dist_assets.exists():
+        app.mount("/assets", StaticFiles(directory=str(dist_assets)), name="assets")
+
     @app.get("/healthcheck", tags=["Health"])
     async def healthcheck() -> dict[str, str]:
         """Health check endpoint for container orchestrators."""
         return {"status": "ok"}
 
-    @app.get("/", tags=["Root"])
-    async def root() -> dict[str, str]:
-        """Root API metadata."""
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        """Favicon fallback."""
+        fav = static_dir / "favicon" / "favicon.ico"
+        if fav.exists():
+            return FileResponse(str(fav))
+        raise HTTPException(status_code=404)
+
+    @app.get("/", include_in_schema=False)
+    async def root_or_spa():
+        """Root endpoint serving SPA index if built, or API metadata."""
+        if dist_index.exists():
+            return FileResponse(str(dist_index))
         return {
             "name": "Football Pool API",
             "version": "2.0.0",
             "docs": "/docs",
             "status": "healthy",
         }
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def spa_fallback(full_path: str):
+        """Fallback router for client-side SPA routing."""
+        if full_path.startswith(("api/", "ws/", "healthcheck", "docs", "redoc", "openapi.json", "static/", "assets/")):
+            raise HTTPException(status_code=404, detail="Not Found")
+        if dist_index.exists():
+            return FileResponse(str(dist_index))
+        raise HTTPException(status_code=404, detail="Not Found")
 
     return app
 

@@ -1,5 +1,24 @@
+ARG NODE_TAG=22-alpine
 ARG PYTHON_TAG=3.13-alpine
 
+# ==========================================
+# Stage 1: Build Frontend SPA
+# ==========================================
+FROM node:${NODE_TAG} AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Install frontend dependencies
+COPY frontend/package*.json ./
+RUN npm ci
+
+# Copy frontend source and build static bundle
+COPY frontend/ ./
+RUN npm run build
+
+# ==========================================
+# Stage 2: Production Python Backend Container
+# ==========================================
 FROM python:${PYTHON_TAG}
 
 ARG USER=notroot
@@ -10,6 +29,9 @@ ENV APP_ENV=production
 ENV TZ=UTC
 ENV WEB_PORT=5600
 ENV USER_NAME=${USER}
+ENV PUID=1000
+ENV PGID=1000
+ENV PYTHONPATH="${APPS_DIR}/football_pool"
 
 EXPOSE ${WEB_PORT}
 
@@ -30,10 +52,17 @@ apk add --no-cache curl gcc g++ musl-dev postgresql-dev libpq-dev make shadow su
 uv pip install --system -r ${APPS_DIR}/football_pool/pyproject.toml
 EOF
 
+# Copy application source code, migrations, and alembic config
 COPY ./apps/football_pool ${APPS_DIR}/football_pool/apps/football_pool
 COPY ./migrations ${APPS_DIR}/football_pool/migrations
 COPY ./alembic.ini ${APPS_DIR}/football_pool/alembic.ini
-COPY ./prod/entrypoint.sh /entrypoint.sh
+COPY --chmod=755 ./prod/entrypoint.sh /entrypoint.sh
+
+# Copy compiled frontend assets from frontend-builder stage
+COPY --from=frontend-builder /app/apps/football_pool/static/dist ${APPS_DIR}/football_pool/apps/football_pool/static/dist
+
+# Ensure directory permissions are set
+RUN chown -R ${USER}:${USER} ${APPS_DIR}
 
 WORKDIR ${APPS_DIR}/football_pool
 

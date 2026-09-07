@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     # Security / Auth
     secret_key: str = Field(
         default_factory=lambda: get_secret(
-            "flask_secret_key",
+            "secret_key",
             "APP_SECRET_KEY",
             "dev-insecure-secret-key-change-in-prod",
         )
