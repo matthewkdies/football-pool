@@ -11,7 +11,7 @@ async def test_list_members(async_client: AsyncClient):
     response = await async_client.get("/api/members")
     assert response.status_code == 200
     members = response.json()
-    assert len(members) == 31
+    assert len(members) == 37
     assert any(m["first_name"] == "Matt" and m["last_name"] == "Dies" for m in members)
 
 

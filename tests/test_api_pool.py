@@ -37,6 +37,12 @@ async def test_get_assignments(async_client: AsyncClient):
     assignments_2025 = resp_2025.json()
     assert len(assignments_2025) == 31
 
+    # 2026 has 34 assignments
+    resp_2026 = await async_client.get("/api/pool/assignments?season_year=2026")
+    assert resp_2026.status_code == 200
+    assignments_2026 = resp_2026.json()
+    assert len(assignments_2026) == 34
+
 
 @pytest.mark.asyncio
 async def test_get_results_standings(async_client: AsyncClient):
