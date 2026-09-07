@@ -17,6 +17,8 @@ class TeamSummary(BaseModel):
     name: str
     full_name: str
     logo_url: str
+    conference: str | None = None
+    division: str | None = None
 
 
 class ScoreboardGame(BaseModel):
