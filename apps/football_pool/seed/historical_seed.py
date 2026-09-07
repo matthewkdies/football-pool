@@ -115,8 +115,8 @@ ASSIGNMENTS_2026: list[tuple[str, str, str]] = [
     ("Katherine", "Hatton", "SEA"),
     ("Pam", "Smith", "SEA"),
     ("Jeep", "Dies", "TB"),
-    ("Jeremy", "Dies", "TEN"),
-    ("Janice", "Carlson", "WSH"),
+    ("Jeremy", "Carlson", "TEN"),
+    ("Janice", "Dies", "WSH"),
 ]
 
 
