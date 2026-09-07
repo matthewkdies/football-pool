@@ -40,9 +40,9 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-base-100/90 backdrop-blur-md border-b border-base-content/10">
-      <div className="navbar max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="navbar max-w-7xl mx-auto px-2 sm:px-6">
         {/* Left: Mobile hamburger & Brand */}
-        <div className="navbar-start flex items-center gap-2">
+        <div className="navbar-start flex items-center gap-1 sm:gap-2">
           {/* Mobile hamburger */}
           <div className="relative lg:hidden">
             <button
@@ -92,13 +92,17 @@ export function Navbar() {
           {/* Brand Logo & Name */}
           <Link
             to="/"
-            className="btn btn-ghost px-2 normal-case flex items-center gap-2 hover:bg-transparent"
+            className="btn btn-ghost px-1 sm:px-2 normal-case flex items-center gap-2 hover:bg-transparent"
+            aria-label="Home"
           >
-            <div className="flex flex-col text-left">
-              <span className="font-extrabold tracking-wider text-base sm:text-lg text-primary">
+            <div className="p-1 sm:p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Trophy className="h-5 w-5" />
+            </div>
+            <div className="hidden sm:flex flex-col text-left">
+              <span className="font-extrabold tracking-wider text-base sm:text-lg text-primary leading-tight">
                 UCMFPTDCYAMBCMYR
               </span>
-              <span className="hidden sm:inline-block text-[10px] opacity-60 tracking-tight -mt-1 font-medium truncate max-w-xs">
+              <span className="hidden md:inline-block text-[10px] opacity-60 tracking-tight font-medium truncate max-w-xs">
                 Uncle Charles Memorial Football Pool
               </span>
             </div>
@@ -129,18 +133,18 @@ export function Navbar() {
         </div>
 
         {/* Right: Actions (Season, Chat, User/Claim, Theme) */}
-        <div className="navbar-end flex items-center gap-1.5 sm:gap-2.5">
+        <div className="navbar-end flex items-center gap-1 sm:gap-2">
           {/* Season Selector */}
           <SeasonSelector />
 
           {/* Chat Button */}
           <button
             onClick={toggleChat}
-            className="btn btn-ghost btn-circle btn-sm md:btn-md relative"
+            className="btn btn-ghost btn-circle btn-xs sm:btn-sm relative"
             aria-label="Open family chat"
             title="Family Chat"
           >
-            <MessageSquare className="h-5 w-5" />
+            <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
             {unreadCount > 0 && (
               <span className="badge badge-primary badge-xs absolute -top-0.5 -right-0.5 animate-pulse font-bold text-[10px]">
                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -157,20 +161,20 @@ export function Navbar() {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-sm btn-ghost gap-2 pl-2 pr-3 bg-base-200/80 hover:bg-base-200 border border-base-content/10 rounded-full"
+                className="btn btn-xs sm:btn-sm btn-ghost gap-1 sm:gap-2 p-1 sm:pl-2 sm:pr-3 bg-base-200/80 hover:bg-base-200 border border-base-content/10 rounded-full"
               >
                 {auth.current_team?.logo_url ? (
                   <img
                     src={`/static/${auth.current_team.logo_url}`}
                     alt={auth.current_team.name}
-                    className="w-5 h-5 object-contain"
+                    className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
                   />
                 ) : (
-                  <div className="w-5 h-5 rounded-full bg-primary text-primary-content flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary text-primary-content flex items-center justify-center text-[9px] sm:text-[10px] font-bold">
                     {auth.member.first_name[0]}
                   </div>
                 )}
-                <span className="text-xs font-semibold max-w-[90px] sm:max-w-none truncate">
+                <span className="text-xs font-semibold hidden sm:inline max-w-[90px] md:max-w-none truncate">
                   {auth.member.first_name}
                 </span>
               </div>
@@ -203,9 +207,9 @@ export function Navbar() {
           ) : (
             <button
               onClick={openClaimModal}
-              className="btn btn-xs sm:btn-sm btn-primary gap-1 font-semibold shadow-xs"
+              className="btn btn-xs sm:btn-sm btn-primary gap-1 font-semibold px-2 sm:px-3 shadow-xs"
             >
-              <UserCheck className="h-3.5 w-3.5" />
+              <UserCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               <span>Claim</span>
             </button>
           )}

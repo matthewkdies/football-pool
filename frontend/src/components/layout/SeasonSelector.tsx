@@ -9,16 +9,18 @@ export function SeasonSelector() {
   }
 
   const formatSeasonSpan = (year: number) => `${year}-${year + 1}`;
+  const formatCompactSeasonSpan = (year: number) => `'${String(year).slice(-2)}-'${String(year + 1).slice(-2)}`;
 
   return (
     <div className="dropdown dropdown-end">
       <div
         tabIndex={0}
         role="button"
-        className="btn btn-sm btn-outline gap-1 font-semibold"
+        className="btn btn-xs sm:btn-sm btn-outline gap-1 font-semibold px-2 sm:px-3"
       >
-        <span>{formatSeasonSpan(selectedSeason)}</span>
-        <ChevronDown className="h-4 w-4 opacity-70" />
+        <span className="sm:hidden">{formatCompactSeasonSpan(selectedSeason)}</span>
+        <span className="hidden sm:inline">{formatSeasonSpan(selectedSeason)}</span>
+        <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 opacity-70" />
       </div>
       <ul
         tabIndex={0}
