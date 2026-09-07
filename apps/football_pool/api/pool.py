@@ -102,18 +102,21 @@ async def get_results(
     wg_result = await db.execute(wg_query)
     winning_games_raw = list(wg_result.scalars().all())
 
-    # Map team_id to member full name for this season
+    # Map team_id to member full names for this season
     assignments_query = (
         select(SeasonAssignment)
         .options(selectinload(SeasonAssignment.member))
         .where(SeasonAssignment.season_year == target_year)
     )
     assignments_res = await db.execute(assignments_query)
-    team_to_owner = {a.team_id: a.member.full_name for a in assignments_res.scalars().all()}
+    team_to_owners: dict[int, list[str]] = {}
+    for a in assignments_res.scalars().all():
+        team_to_owners.setdefault(a.team_id, []).append(a.member.full_name)
 
     winning_games_resp: list[WinningGameResponse] = []
     for wg in winning_games_raw:
-        owner_name = team_to_owner.get(wg.team_id, "No one (Unclaimed)")
+        owners = team_to_owners.get(wg.team_id)
+        owner_name = ", ".join(owners) if owners else "No one (Unclaimed)"
         winning_games_resp.append(
             WinningGameResponse(
                 id=wg.id,

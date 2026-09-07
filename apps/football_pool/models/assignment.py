@@ -18,7 +18,7 @@ class SeasonAssignment(Base):
     """Maps a pool member to an NFL team for a given season."""
 
     __tablename__ = "season_assignments"
-    __table_args__ = (UniqueConstraint("season_year", "team_id", name="uq_season_team"),)
+    __table_args__ = (UniqueConstraint("season_year", "team_id", "member_id", name="uq_season_team_member"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     season_year: Mapped[int] = mapped_column(Integer, index=True, nullable=False)
