@@ -36,7 +36,7 @@ ASSIGNMENTS_2024: list[tuple[str, str, str]] = [
     ("Natalia", "Carlson", "MIN"),
     ("Doug", "Carlson", "NE"),
     ("Ashley", "Dies", "NO"),
-    ("Anna", "Hasman", "NYJ"),
+    ("Anna", "Lippincott-Hasman", "NYJ"),
     ("Julia", "Klein", "LV"),
     ("Alex", "Lippincott", "PHI"),
     ("Janice", "Dies", "PIT"),
@@ -65,7 +65,7 @@ ASSIGNMENTS_2025: list[tuple[str, str, str]] = [
     ("Pam", "Smith", "MIA"),
     ("Judi", "Carlson", "MIN"),
     ("Chip", "Lippincott", "NE"),
-    ("Anna", "Hasman", "NO"),
+    ("Anna", "Lippincott-Hasman", "NO"),
     ("Doug", "Carlson", "NYJ"),
     ("Matt", "Dies", "LV"),
     ("Thomas", "Iodice", "PHI"),
@@ -79,6 +79,44 @@ ASSIGNMENTS_2025: list[tuple[str, str, str]] = [
     ("Alex", "Lippincott", "CHI"),
     ("Katherine", "Hatton", "GB"),
     ("Richard", "Hatton", "LAR"),
+]
+
+
+ASSIGNMENTS_2026: list[tuple[str, str, str]] = [
+    ("Dave", "Hasman", "ATL"),
+    ("Natalia", "Carlson", "BAL"),
+    ("Moira", "Healy", "BUF"),
+    ("Janet", "Lippincott", "CAR"),
+    ("Richard", "Bilotti", "CHI"),
+    ("Colin", "Lippincott", "CHI"),
+    ("Ashley", "Dies", "CIN"),
+    ("Mike", "Dies", "CIN"),
+    ("Aidan", "Grass", "CLE"),
+    ("Kevin", "Hider", "DAL"),
+    ("Paul", "Rasmussen", "DEN"),
+    ("Madison", "Dies", "DET"),
+    ("Nathan", "Smith", "GB"),
+    ("Aaron", "Smith", "IND"),
+    ("Missy", "Dies", "JAX"),
+    ("Kathy", "Dies", "KC"),
+    ("Judi", "Carlson", "LAC"),
+    ("Lauryn", "Dies", "LAR"),
+    ("Ashley", "Lippincott", "MIA"),
+    ("Thomas", "Iodice", "MIN"),
+    ("Julia", "Klein", "NE"),
+    ("Doug", "Carlson", "NO"),
+    ("Charlotte", "Lippincott", "NYG"),
+    ("Matt", "Dies", "NYJ"),
+    ("Alex", "Lippincott", "LV"),
+    ("Anna", "Lippincott-Hasman", "PHI"),
+    ("Lori", "Rasmussen", "PIT"),
+    ("Dennis", "Smith", "PIT"),
+    ("Chip", "Lippincott", "SF"),
+    ("Katherine", "Hatton", "SEA"),
+    ("Pam", "Smith", "SEA"),
+    ("Jeep", "Dies", "TB"),
+    ("Jeremy", "Dies", "TEN"),
+    ("Janice", "Carlson", "WSH"),
 ]
 
 
@@ -98,7 +136,7 @@ async def seed_database(session: AsyncSession) -> None:
         team_map[team.abbreviation] = team
 
     # 2. Extract unique members from assignments
-    all_members_raw = {(first, last) for first, last, _ in ASSIGNMENTS_2024 + ASSIGNMENTS_2025}
+    all_members_raw = {(first, last) for first, last, _ in ASSIGNMENTS_2024 + ASSIGNMENTS_2025 + ASSIGNMENTS_2026}
     member_map: dict[tuple[str, str], Member] = {}
 
     for first, last in sorted(all_members_raw):
@@ -110,10 +148,11 @@ async def seed_database(session: AsyncSession) -> None:
             await session.flush()
         member_map[(first, last)] = member
 
-    # 3. Seed Season Assignments for 2024 and 2025
+    # 3. Seed Season Assignments for 2024, 2025, and 2026
     season_assignments_by_year = [
         (2024, ASSIGNMENTS_2024),
         (2025, ASSIGNMENTS_2025),
+        (2026, ASSIGNMENTS_2026),
     ]
 
     for year, assignments in season_assignments_by_year:
@@ -124,6 +163,7 @@ async def seed_database(session: AsyncSession) -> None:
                 select(SeasonAssignment).where(
                     SeasonAssignment.season_year == year,
                     SeasonAssignment.team_id == team.id,
+                    SeasonAssignment.member_id == member.id,
                 )
             )
             existing_assignment = result.scalar_one_or_none()
