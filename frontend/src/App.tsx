@@ -36,8 +36,8 @@ export default function App() {
               <Footer />
 
               {/* Modals & Slide-out Drawers */}
-              <ClaimProfileModal />
               <ChatDrawer />
+              <ClaimProfileModal />
             </div>
           </ChatProvider>
         </SeasonProvider>

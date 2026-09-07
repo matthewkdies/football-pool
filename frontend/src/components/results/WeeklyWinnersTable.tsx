@@ -31,7 +31,7 @@ export function WeeklyWinnersTable({ winningGames }: WeeklyWinnersTableProps) {
       case 'PLAYOFF':
         return 'Playoff Win';
       case 'SUPER_BOWL':
-        return 'Super Bowl Champion';
+        return 'Super Bowl';
       default:
         return type;
     }
@@ -79,8 +79,8 @@ export function WeeklyWinnersTable({ winningGames }: WeeklyWinnersTableProps) {
                 <td className="font-medium text-sm">
                   {game.winning_owner_name}
                 </td>
-                <td>
-                  <span className="badge badge-outline badge-sm text-[11px] font-semibold">
+                <td className="whitespace-nowrap">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border border-base-content/20 bg-base-200/60">
                     {formatWinType(game.winning_type)}
                   </span>
                 </td>

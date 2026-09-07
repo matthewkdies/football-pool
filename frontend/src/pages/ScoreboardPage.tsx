@@ -24,7 +24,11 @@ export function ScoreboardPage() {
   const ownerMap = useMemo(() => {
     const map: Record<string, string> = {};
     for (const a of assignments) {
-      map[a.team.abbreviation] = a.member.full_name;
+      if (map[a.team.abbreviation]) {
+        map[a.team.abbreviation] += `, ${a.member.full_name}`;
+      } else {
+        map[a.team.abbreviation] = a.member.full_name;
+      }
     }
     return map;
   }, [assignments]);
@@ -79,7 +83,7 @@ export function ScoreboardPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
           {sortedGames.map((game) => (
             <GameCard
               key={game.id}

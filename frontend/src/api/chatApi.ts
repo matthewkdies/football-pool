@@ -5,4 +5,11 @@ export const chatApi = {
   /** Fetch paginated chat history */
   getHistory: (limit = 50, offset = 0) =>
     request<ChatMessageResponse[]>(`/api/chat/history?limit=${limit}&offset=${offset}`),
+
+  /** Post a new chat message via authenticated session */
+  sendMessage: (content: string) =>
+    request<ChatMessageResponse>('/api/chat/messages', {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
 };

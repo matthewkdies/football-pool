@@ -14,6 +14,8 @@ export interface TeamSummary {
   name: string;
   full_name: string;
   logo_url: string;
+  conference?: 'AFC' | 'NFC' | string;
+  division?: string;
 }
 
 export interface ScoreboardGame {

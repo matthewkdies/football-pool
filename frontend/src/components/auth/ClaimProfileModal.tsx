@@ -26,8 +26,8 @@ export function ClaimProfileModal() {
   };
 
   return (
-    <div className="modal modal-open backdrop-blur-sm z-50">
-      <div className="modal-box relative max-w-md border border-base-content/10 shadow-2xl bg-base-200">
+    <div className="modal modal-open backdrop-blur-sm z-[100]">
+      <div className="modal-box relative max-w-md border border-base-content/10 shadow-2xl bg-base-200 z-[101]">
         <button
           onClick={closeClaimModal}
           className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"

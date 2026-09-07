@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode, useCallback } from 'react';
 import { ChatMessageResponse, WSChatMessage } from '../types';
 import { chatApi } from '../api/chatApi';
+import { useAuth } from './AuthContext';
 
 interface ChatContextType {
   messages: ChatMessageResponse[];
@@ -10,13 +11,16 @@ interface ChatContextType {
   openChat: () => void;
   closeChat: () => void;
   toggleChat: () => void;
-  sendMessage: (content: string) => void;
+  sendMessage: (content: string) => Promise<void>;
   loadHistory: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const { auth } = useAuth();
+  const claimedMemberId = auth?.claimed && auth.member ? auth.member.id : null;
+
   const [messages, setMessages] = useState<ChatMessageResponse[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
@@ -67,7 +71,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       ws.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data) as WSChatMessage;
+          const data = JSON.parse(event.data) as WSChatMessage & { message?: string };
           if (data.type === 'chat_message') {
             const newMsg: ChatMessageResponse = {
               id: data.id,
@@ -88,6 +92,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             if (!isChatOpenRef.current) {
               setUnreadCount((prev) => prev + 1);
             }
+          } else if (data.type === 'error') {
+            console.warn('Chat WebSocket error:', data.message);
           }
         } catch {
           // invalid JSON or error payload
@@ -113,6 +119,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Connect on mount and load initial history
   useEffect(() => {
     loadHistory();
     connectWebSocket();
@@ -127,11 +134,34 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
   }, [loadHistory, connectWebSocket]);
 
-  const sendMessage = (content: string) => {
-    if (!content.trim() || !socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
-      return;
+  // When claimed profile changes, cleanly reconnect WebSocket to sync identity
+  useEffect(() => {
+    if (socketRef.current) {
+      socketRef.current.close();
+      socketRef.current = null;
     }
-    socketRef.current.send(JSON.stringify({ content: content.trim() }));
+    connectWebSocket();
+  }, [claimedMemberId, connectWebSocket]);
+
+  const sendMessage = async (content: string) => {
+    const trimmed = content.trim();
+    if (!trimmed) return;
+
+    try {
+      // Primary: Post via authenticated REST endpoint (logs in FastAPI and saves to DB)
+      const newMsg = await chatApi.sendMessage(trimmed);
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === newMsg.id)) return prev;
+        return [...prev, newMsg];
+      });
+    } catch (err: unknown) {
+      // Fallback: Send over WebSocket if available
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({ content: trimmed }));
+      } else {
+        throw err;
+      }
+    }
   };
 
   return (

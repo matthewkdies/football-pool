@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send, UserCheck } from 'lucide-react';
+import { Send, UserCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
 
@@ -7,14 +7,23 @@ export function ChatInput() {
   const { auth, openClaimModal } = useAuth();
   const { sendMessage, isConnected } = useChat();
   const [content, setContent] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   const isClaimed = auth?.claimed && auth.member;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() || !isClaimed || !isConnected) return;
-    sendMessage(content);
+    if (!content.trim() || !isClaimed || isSending) return;
+    const textToSend = content;
     setContent('');
+    setIsSending(true);
+    try {
+      await sendMessage(textToSend);
+    } catch {
+      setContent(textToSend); // Restore input if send fails
+    } finally {
+      setIsSending(false);
+    }
   };
 
   if (!isClaimed) {
@@ -44,17 +53,17 @@ export function ChatInput() {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         maxLength={500}
-        disabled={!isConnected}
-        placeholder={isConnected ? `Chat as ${auth.member?.first_name}...` : 'Connecting to chat...'}
+        disabled={isSending}
+        placeholder={isConnected ? `Chat as ${auth.member?.first_name}...` : `Chat as ${auth.member?.first_name}...`}
         className="input input-sm md:input-md input-bordered flex-1 bg-base-100 text-sm focus:outline-primary"
       />
       <button
         type="submit"
-        disabled={!content.trim() || !isConnected}
+        disabled={!content.trim() || isSending}
         className="btn btn-sm md:btn-md btn-primary btn-square"
         aria-label="Send message"
       >
-        <Send className="h-4 w-4" />
+        {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
       </button>
     </form>
   );

@@ -24,7 +24,7 @@ export function GameCard({
 
     return (
       <div
-        className={`flex flex-col items-center flex-1 p-2.5 rounded-xl transition-all ${
+        className={`flex flex-col items-center flex-1 min-w-0 p-2 sm:p-2.5 rounded-xl transition-all ${
           isWinningPot
             ? 'bg-success/15 border border-success/30 shadow-xs'
             : isUserTeam
@@ -33,11 +33,11 @@ export function GameCard({
         }`}
       >
         {/* Team Logo */}
-        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mb-2">
+        <div className="relative w-12 h-12 sm:w-14 sm:h-14 max-w-full flex items-center justify-center mb-1.5 shrink-0">
           <img
             src={`/static/${team.logo_url}`}
             alt={team.full_name}
-            className="w-full h-full object-contain filter drop-shadow-sm"
+            className="max-w-full max-h-full object-contain filter drop-shadow-sm"
             loading="lazy"
           />
           {isWinningPot && (
@@ -51,18 +51,24 @@ export function GameCard({
         </div>
 
         {/* Team Names */}
-        <div className="text-center w-full">
-          <div className="font-bold text-xs sm:text-sm leading-tight truncate">
+        <div className="text-center w-full px-0.5 min-w-0">
+          <div
+            className="font-bold text-xs sm:text-sm leading-tight truncate"
+            title={team.city}
+          >
             {team.city}
           </div>
-          <div className="font-semibold text-xs opacity-75 truncate">
+          <div
+            className="font-semibold text-[11px] sm:text-xs opacity-75 truncate"
+            title={team.name}
+          >
             {team.name}
           </div>
         </div>
 
         {/* Score */}
         {isStarted && (
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono mt-1.5 text-base-content">
+          <div className="text-2xl sm:text-3xl font-extrabold font-mono mt-1 text-base-content leading-none">
             {score}
           </div>
         )}
@@ -70,17 +76,18 @@ export function GameCard({
         {/* Owner Name Badge */}
         {ownerName ? (
           <div
-            className={`mt-2 text-[11px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 truncate max-w-full ${
+            className={`mt-1.5 text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full flex items-center justify-center gap-1 max-w-full min-w-0 ${
               isUserTeam
                 ? 'bg-primary text-primary-content shadow-xs'
                 : 'bg-base-300 text-base-content/80'
             }`}
+            title={ownerName}
           >
             <User className="h-3 w-3 shrink-0" />
             <span className="truncate">{ownerName}</span>
           </div>
         ) : (
-          <div className="mt-2 text-[10px] opacity-40 italic">Unassigned</div>
+          <div className="mt-1.5 text-[10px] opacity-40 italic">Unassigned</div>
         )}
       </div>
     );
@@ -96,15 +103,15 @@ export function GameCard({
       className="card bg-base-100 border border-base-content/10 shadow-md hover:shadow-xl hover:border-primary/40 transition-all cursor-pointer overflow-hidden group"
       title="Click to view ESPN Gamecast"
     >
-      <div className="card-body p-3.5 sm:p-4">
-        <div className="flex items-center justify-between gap-2">
+      <div className="card-body p-2.5 sm:p-3.5">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full min-w-0">
           {/* Away Team */}
           {renderTeamSection(game.away_team, game.away_team_score)}
 
           {/* Center: Game Status & vs */}
-          <div className="flex flex-col items-center justify-center px-1 shrink-0">
+          <div className="flex flex-col items-center justify-center px-0.5 shrink-0 min-w-[48px] sm:min-w-[56px]">
             <GameStatusBadge game={game} />
-            <span className="text-[10px] font-bold opacity-30 mt-1 uppercase tracking-wider">
+            <span className="text-[10px] font-bold opacity-30 mt-0.5 uppercase tracking-wider">
               VS
             </span>
           </div>

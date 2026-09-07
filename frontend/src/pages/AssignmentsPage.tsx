@@ -42,6 +42,14 @@ export function AssignmentsPage() {
     };
   }, [selectedSeason]);
 
+  // Known AFC and NFC team abbreviations for robust fallback
+  const afcTeams = useMemo(() => new Set([
+    'BUF', 'MIA', 'NE', 'NYJ',
+    'BAL', 'CIN', 'CLE', 'PIT',
+    'HOU', 'IND', 'JAX', 'TEN',
+    'DEN', 'KC', 'LV', 'LAC',
+  ]), []);
+
   // Filter assignments based on search term and conference
   const filteredAssignments = useMemo(() => {
     return assignments.filter((a) => {
@@ -52,12 +60,13 @@ export function AssignmentsPage() {
         a.team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         a.team.abbreviation.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Simple heuristic for AFC vs NFC if conference not directly in TeamSummary
-      // Note: TeamSummary has abbreviation, city, name, logo_url
-      // If needed, all teams match ALL; for AFC/NFC we can check known conferences or show all
-      return matchesSearch;
+      const teamConf = a.team.conference || (afcTeams.has(a.team.abbreviation) ? 'AFC' : 'NFC');
+      const matchesConference =
+        selectedConference === 'ALL' || teamConf === selectedConference;
+
+      return matchesSearch && matchesConference;
     });
-  }, [assignments, searchTerm]);
+  }, [assignments, searchTerm, selectedConference, afcTeams]);
 
   // Sort assignments alphabetically by team city
   const sortedAssignments = useMemo(() => {
@@ -115,7 +124,7 @@ export function AssignmentsPage() {
             <AssignmentCard
               key={a.id}
               assignment={a}
-              isUserTeam={auth?.current_team?.abbreviation === a.team.abbreviation}
+              isUserTeam={Boolean(auth?.claimed && auth.member?.id === a.member.id)}
             />
           ))}
         </div>

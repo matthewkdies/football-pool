@@ -5,7 +5,10 @@ const DEFAULT_THEME = 'dim';
 
 export function useTheme() {
   const [theme, setTheme] = useState<string>(() => {
-    return localStorage.getItem(THEME_STORAGE_KEY) || DEFAULT_THEME;
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored === 'dark' || stored === 'dim') return 'dim';
+    if (stored === 'light' || stored === 'nord') return 'nord';
+    return DEFAULT_THEME;
   });
 
   useEffect(() => {
@@ -14,12 +17,14 @@ export function useTheme() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dim' ? 'nord' : 'dim'));
+    setTheme((prev) => (prev === 'dim' || prev === 'dark' ? 'nord' : 'dim'));
   };
+
+  const isDark = theme === 'dim' || theme === 'dark';
 
   return {
     theme,
-    isDark: theme === 'dim',
+    isDark,
     toggleTheme,
     setTheme,
   };
