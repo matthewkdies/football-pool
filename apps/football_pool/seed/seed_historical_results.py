@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
-import sys
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,14 +40,11 @@ async def seed_season_results(
     logger.info(f"--- Seeding historical results for season {season_year} ---")
 
     # Check if results already exist
-    existing_res = await session.execute(
-        select(WinningGame).where(WinningGame.season_year == season_year)
-    )
+    existing_res = await session.execute(select(WinningGame).where(WinningGame.season_year == season_year))
     existing_count = len(existing_res.scalars().all())
     if existing_count > 0 and not force:
         logger.info(
-            f"Season {season_year} already has {existing_count} winning games. "
-            "Skipping (use --force to overwrite)."
+            f"Season {season_year} already has {existing_count} winning games. Skipping (use --force to overwrite)."
         )
         return existing_count
 
@@ -119,15 +115,17 @@ async def seed_season_results(
         payout = pot.amount
 
         # Update Pot based on whether an owned team won
-        has_real_winner = any(
-            db_teams[abbr].id in owned_team_ids for abbr in winner_abbrs if abbr in db_teams
-        )
+        has_real_winner = any(db_teams[abbr].id in owned_team_ids for abbr in winner_abbrs if abbr in db_teams)
         if has_real_winner:
-            logger.info(f"  Week {week_num} won by owned team! Winners: {winner_abbrs}, payout: ${payout}. Pot resets to $10.")
+            logger.info(
+                f"  Week {week_num} won by owned team! Winners: {winner_abbrs}, payout: ${payout}. Pot resets to $10."
+            )
             pot.amount = 10
         else:
             pot.amount += 10
-            logger.info(f"  Week {week_num} won by unowned team. Winners: {winner_abbrs}. Pot rolls over to ${pot.amount}.")
+            logger.info(
+                f"  Week {week_num} won by unowned team. Winners: {winner_abbrs}. Pot rolls over to ${pot.amount}."
+            )
 
         for abbr in winner_abbrs:
             if abbr in db_teams:
@@ -158,7 +156,9 @@ async def seed_season_results(
 
     # 2. Postseason (Wild Card = W19, Divisional = W20, Conf Champ = W21, Super Bowl = W22)
     for espn_week, display_week, round_name in POSTSEASON_MAPPING:
-        logger.info(f"Fetching {season_year} Postseason {round_name} (ESPN week {espn_week}, display W{display_week})...")
+        logger.info(
+            f"Fetching {season_year} Postseason {round_name} (ESPN week {espn_week}, display W{display_week})..."
+        )
         try:
             raw_data = await client.fetch_scoreboard(
                 params={"dates": str(season_year), "seasontype": "3", "week": str(espn_week)}
@@ -170,7 +170,7 @@ async def seed_season_results(
         parsed = parse_scoreboard_data(raw_data, pot_amount=pot.amount)
         is_sb = espn_week == 5
         w_type = WinningType.SUPER_BOWL if is_sb else WinningType.PLAYOFF
-        payout = 25 if is_sb else 10
+        payout = 25 if is_sb else 15 if w_type == WinningType.PLAYOFF else 10
 
         winners = [g.winning_team_abbr for g in parsed.games if g.is_final and g.winning_team_abbr]
         for abbr in winners:

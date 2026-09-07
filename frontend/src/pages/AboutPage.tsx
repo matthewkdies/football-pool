@@ -1,4 +1,4 @@
-import { BookOpen, Award, PhoneCall, Sparkles } from 'lucide-react';
+import { Award, BookOpen, PhoneCall, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function AboutPage() {
@@ -122,7 +122,7 @@ export function AboutPage() {
                 <div className="flex items-start gap-3 p-3 bg-base-200/60 rounded-xl">
                   <span className="badge badge-primary font-bold shrink-0 mt-0.5">5</span>
                   <div className="text-xs sm:text-sm">
-                    <strong>Playoffs:</strong> Every playoff game won by your team earns you <strong>$10</strong>.
+                    <strong>Playoffs:</strong> Every playoff game won by your team earns you <strong>$15</strong>.
                   </div>
                 </div>
 

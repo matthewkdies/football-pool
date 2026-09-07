@@ -69,7 +69,7 @@ async def resolve_weekly_results(
         w_type = WinningType.SUPER_BOWL
         winner_abbrs = [g.winning_team_abbr for g in scoreboard_week.games if g.is_final and g.winning_team_abbr]
     elif scoreboard_week.is_postseason:
-        payout = 10
+        payout = 15
         w_type = WinningType.PLAYOFF
         winner_abbrs = [g.winning_team_abbr for g in scoreboard_week.games if g.is_final and g.winning_team_abbr]
     else:
