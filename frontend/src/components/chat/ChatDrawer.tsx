@@ -71,7 +71,15 @@ export function ChatDrawer() {
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 bg-base-100"
           >
-            {messages.length === 0 ? (
+            {!auth?.claimed ? (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 opacity-75">
+                <MessageSquare className="h-10 w-10 mb-2 opacity-40 text-primary" />
+                <p className="font-semibold text-sm">Family Chat is Protected</p>
+                <p className="text-xs mt-1 max-w-xs text-base-content/70">
+                  Claim your profile below to view family messages and chat live during games.
+                </p>
+              </div>
+            ) : messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 opacity-60">
                 <MessageSquare className="h-10 w-10 mb-2 opacity-40" />
                 <p className="font-semibold text-sm">No messages yet!</p>

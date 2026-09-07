@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
+import time
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect, status
 from sqlalchemy import select
@@ -24,12 +26,38 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Chat"])
 
 
+def is_allowed_origin(origin: str | None, host: str | None) -> bool:
+    """Validates that the Origin header matches host or configured CORS origins."""
+    if not origin:
+        return True  # Non-browser clients (native apps, curl, test clients)
+    try:
+        parsed_origin = urlparse(origin)
+        origin_netloc = parsed_origin.netloc.lower()
+        if host and origin_netloc == host.lower():
+            return True
+        for allowed in settings.cors_origins:
+            if allowed == "*":
+                continue
+            allowed_netloc = urlparse(allowed).netloc.lower()
+            if origin_netloc == allowed_netloc or origin.rstrip("/") == allowed.rstrip("/"):
+                return True
+    except Exception:
+        return False
+    return False
+
+
 @router.get("/api/chat/history", response_model=list[ChatMessageResponse])
 async def get_chat_history(
     limit: int = Query(default=50, ge=1, le=100),
+    current_member: Member | None = Depends(get_optional_current_member),
     db: AsyncSession = Depends(get_db),
 ) -> list[ChatMessageResponse]:
-    """Returns recent chat messages in chronological order."""
+    """Returns recent chat messages in chronological order (authenticated members only)."""
+    if not current_member:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You must claim a member profile to view chat history.",
+        )
     query = (
         select(ChatMessage)
         .options(selectinload(ChatMessage.member))
@@ -116,6 +144,13 @@ async def post_chat_message(
 @router.websocket("/ws/chat")
 async def websocket_chat_endpoint(websocket: WebSocket) -> None:
     """WebSocket endpoint for real-time family-friendly chat."""
+    origin = websocket.headers.get("origin")
+    host = websocket.headers.get("host")
+    if not is_allowed_origin(origin, host):
+        logger.warning(f"Rejecting WebSocket connection with unauthorized origin: {origin}")
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Origin not allowed")
+        return
+
     await websocket.accept()
 
     # 1. Resolve claimed identity from session cookie
@@ -132,6 +167,17 @@ async def websocket_chat_endpoint(websocket: WebSocket) -> None:
             else:
                 member_id = None
 
+    if not member_id or not author_name:
+        logger.warning("Unclaimed WebSocket client attempted to connect to family chat.")
+        await websocket.send_json(
+            {
+                "type": "error",
+                "message": "You must claim a member profile to join the chat.",
+            }
+        )
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Claimed profile required")
+        return
+
     client = ChatClient(websocket=websocket, member_id=member_id, author_name=author_name)
     await chat_manager.connect(client)
     logger.info(f"WebSocket client connected: author={client.author_name} (claimed={client.is_claimed})")
@@ -140,14 +186,39 @@ async def websocket_chat_endpoint(websocket: WebSocket) -> None:
     await websocket.send_json(
         {
             "type": "connected",
-            "claimed": client.is_claimed,
+            "claimed": True,
             "author_name": client.author_name,
         }
     )
 
+    message_timestamps: list[float] = []
+
     try:
         while True:
             raw_text = await websocket.receive_text()
+
+            # Rate limiting: max 5 messages per 5 seconds per connection
+            now = time.time()
+            message_timestamps = [t for t in message_timestamps if now - t < 5.0]
+            if len(message_timestamps) >= 5:
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "message": "You are sending messages too quickly. Please wait a moment.",
+                    }
+                )
+                continue
+            message_timestamps.append(now)
+
+            # Message payload size limit
+            if len(raw_text) > 1000:
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "message": "Message exceeds maximum allowed length.",
+                    }
+                )
+                continue
 
             # Support both raw text and JSON payloads {"content": "..."}
             try:
@@ -157,28 +228,6 @@ async def websocket_chat_endpoint(websocket: WebSocket) -> None:
                 content = raw_text
 
             if not is_valid_message(content):
-                continue
-
-            # If client was not claimed at connect time, try re-checking cookies
-            if not client.is_claimed:
-                token = websocket.cookies.get(settings.session_cookie_name)
-                fresh_member_id = verify_session_token(token)
-                if fresh_member_id:
-                    async with async_session_factory() as session:
-                        result = await session.execute(select(Member).where(Member.id == fresh_member_id))
-                        member = result.scalar_one_or_none()
-                        if member:
-                            client.member_id = member.id
-                            client.author_name = member.full_name
-
-            if not client.is_claimed or not client.member_id or not client.author_name:
-                logger.warning(f"Unclaimed WebSocket client attempted to post message: {content[:30]}")
-                await websocket.send_json(
-                    {
-                        "type": "error",
-                        "message": "You must claim a member profile to post in the chat.",
-                    }
-                )
                 continue
 
             # Apply family-friendly moderation filter

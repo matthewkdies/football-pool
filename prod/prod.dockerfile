@@ -36,7 +36,6 @@ ENV PYTHONPATH="${APPS_DIR}/football_pool"
 EXPOSE ${WEB_PORT}
 
 RUN <<EOF
-sed -i 's/https/http/' /etc/apk/repositories
 addgroup --system ${USER}
 adduser --system ${USER}
 EOF

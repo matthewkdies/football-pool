@@ -9,6 +9,15 @@ interface GameCardProps {
   claimedTeamAbbr?: string | null;
 }
 
+function isValidEspnUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && (parsed.hostname === 'espn.com' || parsed.hostname.endsWith('.espn.com'));
+  } catch {
+    return false;
+  }
+}
+
 export function GameCard({
   game,
   winningTeamAbbrs,
@@ -96,7 +105,7 @@ export function GameCard({
   return (
     <div
       onClick={() => {
-        if (game.espn_url) {
+        if (game.espn_url && isValidEspnUrl(game.espn_url)) {
           window.open(game.espn_url, '_blank', 'noopener,noreferrer');
         }
       }}

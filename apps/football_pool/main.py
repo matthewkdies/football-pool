@@ -29,6 +29,14 @@ async def lifespan(app: FastAPI):
     """Application lifespan managing background poller and database connection pool."""
     logger.info("Initializing Football Pool FastAPI backend...")
 
+    if settings.is_production and (
+        not settings.secret_key or settings.secret_key == "dev-insecure-secret-key-change-in-prod"
+    ):
+        raise RuntimeError(
+            "FATAL: Insecure secret key configured in production. "
+            "Please set APP_SECRET_KEY or provide /run/secrets/secret_key."
+        )
+
     # Start adaptive ESPN poller task in background
     stop_event = asyncio.Event()
     poller_task = asyncio.create_task(scoreboard_polling_loop(cache=scoreboard_cache, stop_event=stop_event))
@@ -56,10 +64,21 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS configuration
+    # CORS configuration - ensure wildcard is not used with allow_credentials
+    allowed_origins = [o for o in settings.cors_origins if o != "*"]
+    if not allowed_origins:
+        allowed_origins = [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5600",
+            "http://127.0.0.1:5600",
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+        ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.cors_origins,
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

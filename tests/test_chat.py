@@ -74,14 +74,23 @@ def test_websocket_chat_unclaimed(chat_app_and_db):
 
     with client.websocket_connect("/ws/chat") as websocket:
         data = websocket.receive_json()
-        assert data["type"] == "connected"
-        assert data["claimed"] is False
+        assert data["type"] == "error"
+        assert "must claim a member profile" in data["message"]
 
-        # Attempt to send message
-        websocket.send_text("Hello everyone")
-        err = websocket.receive_json()
-        assert err["type"] == "error"
-        assert "must claim a member profile" in err["message"]
+
+def test_websocket_cswsh_rejected(chat_app_and_db):
+    """Verifies that cross-origin WebSocket connection attempts are rejected (CSWSH defense)."""
+    app, _ = chat_app_and_db
+    client = TestClient(app)
+    token = create_session_token(1)
+    cookies = {settings.session_cookie_name: token}
+    headers = {"origin": "https://malicious-attacker.com"}
+
+    from starlette.websockets import WebSocketDisconnect
+
+    with pytest.raises(WebSocketDisconnect):
+        with client.websocket_connect("/ws/chat", cookies=cookies, headers=headers):
+            pass
 
 
 def test_websocket_chat_claimed_and_moderated(chat_app_and_db):
@@ -119,6 +128,29 @@ def test_websocket_chat_claimed_and_moderated(chat_app_and_db):
     asyncio.run(verify_db())
 
 
+def test_websocket_rate_limiting(chat_app_and_db):
+    """Verifies that sending messages too quickly triggers rate limiting error."""
+    app, _ = chat_app_and_db
+    client = TestClient(app)
+    token = create_session_token(1)
+    cookies = {settings.session_cookie_name: token}
+
+    with client.websocket_connect("/ws/chat", cookies=cookies) as websocket:
+        data = websocket.receive_json()
+        assert data["type"] == "connected"
+
+        for i in range(5):
+            websocket.send_json({"content": f"Message {i}"})
+            res = websocket.receive_json()
+            assert res["type"] == "chat_message"
+
+        # 6th rapid message should be throttled
+        websocket.send_json({"content": "Message 6 flood"})
+        err = websocket.receive_json()
+        assert err["type"] == "error"
+        assert "too quickly" in err["message"]
+
+
 def test_chat_history_rest_endpoint(chat_app_and_db):
     app, session_factory = chat_app_and_db
     client = TestClient(app)
@@ -134,6 +166,13 @@ def test_chat_history_rest_endpoint(chat_app_and_db):
 
     asyncio.run(seed_msgs())
 
+    # Unauthenticated request is rejected with 401
+    unauth_response = client.get("/api/chat/history?limit=10")
+    assert unauth_response.status_code == 401
+
+    # Authenticated request succeeds
+    token = create_session_token(member_id=1)
+    client.cookies.set(settings.session_cookie_name, token)
     response = client.get("/api/chat/history?limit=10")
     assert response.status_code == 200
     history = response.json()

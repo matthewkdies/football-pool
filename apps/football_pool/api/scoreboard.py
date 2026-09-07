@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -14,6 +15,9 @@ from ..services.scoreboard import scoreboard_cache
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["Scoreboard"])
+
+_last_manual_refresh: float = 0.0
+_REFRESH_COOLDOWN_SECONDS: float = 15.0
 
 
 @router.get("/scoreboard", response_model=ScoreboardWeek)
@@ -42,8 +46,17 @@ async def get_scoreboard() -> ScoreboardWeek:
 
 @router.post("/scoreboard/refresh", response_model=ScoreboardWeek)
 async def refresh_scoreboard() -> ScoreboardWeek:
-    """Forces an immediate refresh of the scoreboard from the ESPN API."""
+    """Forces an immediate refresh of the scoreboard from the ESPN API with rate-limiting cooldown."""
+    global _last_manual_refresh
+    now = time.time()
+    if now - _last_manual_refresh < _REFRESH_COOLDOWN_SECONDS:
+        cached = await scoreboard_cache.get()
+        if cached:
+            logger.info("Scoreboard refresh served from cache due to cooldown.")
+            return cached
+
     logger.info("Manual scoreboard refresh triggered via API endpoint.")
+    _last_manual_refresh = now
     client = ESPNClient()
     await run_poller_cycle(client, scoreboard_cache)
     cached = await scoreboard_cache.get()

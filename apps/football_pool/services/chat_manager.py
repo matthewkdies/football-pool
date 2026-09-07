@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import dataclass
 from typing import Any
 
 from fastapi import WebSocket
@@ -12,13 +11,18 @@ from fastapi import WebSocket
 logger = logging.getLogger(__name__)
 
 
-@dataclass(eq=True, frozen=True)
 class ChatClient:
     """Represents a connected WebSocket client."""
 
-    websocket: WebSocket
-    member_id: int | None
-    author_name: str | None
+    def __init__(
+        self,
+        websocket: WebSocket,
+        member_id: int | None = None,
+        author_name: str | None = None,
+    ) -> None:
+        self.websocket = websocket
+        self.member_id = member_id
+        self.author_name = author_name
 
     @property
     def is_claimed(self) -> bool:

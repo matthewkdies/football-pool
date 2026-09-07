@@ -1,6 +1,9 @@
 """Tests for member listing and claim-based authentication endpoints."""
 
+import asyncio
+
 import pytest
+from fastapi import FastAPI
 from httpx import AsyncClient
 
 from apps.football_pool.config import settings
@@ -51,3 +54,44 @@ async def test_claim_and_auth_me_flow(async_client: AsyncClient):
 async def test_claim_invalid_member(async_client: AsyncClient):
     response = await async_client.post("/api/auth/claim", json={"member_id": 99999})
     assert response.status_code == 404
+
+
+def test_session_token_expiration():
+    """Verifies that expired session tokens are rejected by verify_session_token (SEC-07)."""
+    from apps.football_pool.utils.security import create_session_token, verify_session_token
+
+    token = create_session_token(member_id=42)
+    # Valid with normal expiration
+    assert verify_session_token(token, max_age=3600) == 42
+    # Expired token rejected
+    assert verify_session_token(token, max_age=-1) is None
+
+
+@pytest.mark.asyncio
+async def test_cors_disallows_untrusted_origin(async_client: AsyncClient):
+    """Verifies that untrusted origins are not reflected in CORS headers (SEC-01)."""
+    response = await async_client.get("/api/members", headers={"Origin": "https://malicious-site.example"})
+    assert response.headers.get("access-control-allow-origin") != "https://malicious-site.example"
+
+
+def test_production_secret_key_enforcement():
+    """Verifies that lifespan rejects default insecure secret key in production mode (SEC-03)."""
+    from apps.football_pool.main import lifespan
+
+    app = FastAPI(lifespan=lifespan)
+    prev_env = settings.env
+    prev_key = settings.secret_key
+    try:
+        settings.env = "production"
+        settings.secret_key = "dev-insecure-secret-key-change-in-prod"
+        with pytest.raises(RuntimeError) as exc_info:
+
+            async def run_lifespan():
+                async with lifespan(app):
+                    pass
+
+            asyncio.run(run_lifespan())
+        assert "Insecure secret key configured in production" in str(exc_info.value)
+    finally:
+        settings.env = prev_env
+        settings.secret_key = prev_key

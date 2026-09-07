@@ -70,14 +70,23 @@ class Settings(BaseSettings):
     session_max_age_seconds: int = 31_536_000  # 1 year
 
     # ESPN API & Poller
-    espn_api_url: str = "http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+    espn_api_url: str = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
     poll_interval_active_seconds: int = 60
     poll_interval_upcoming_seconds: int = 300
     poll_interval_idle_seconds: int = 900
     poll_interval_offseason_seconds: int = 3600
 
-    # CORS
-    cors_origins: list[str] = ["*"]
+    # CORS & WebSocket Allowed Origins
+    cors_origins: list[str] = Field(
+        default_factory=lambda: [
+            origin.strip()
+            for origin in os.getenv(
+                "CORS_ORIGINS",
+                "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5600,http://127.0.0.1:5600,http://localhost:8000,http://127.0.0.1:8000",
+            ).split(",")
+            if origin.strip()
+        ]
+    )
 
     @property
     def async_database_url(self) -> str:

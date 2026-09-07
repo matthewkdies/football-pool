@@ -52,6 +52,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const connectWebSocket = useCallback(() => {
+    if (!claimedMemberId) return;
     if (socketRef.current && (socketRef.current.readyState === WebSocket.OPEN || socketRef.current.readyState === WebSocket.CONNECTING)) {
       return;
     }
@@ -103,6 +104,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       ws.onclose = () => {
         setIsConnected(false);
         socketRef.current = null;
+        if (!claimedMemberId) return;
         // Schedule reconnect
         const delay = Math.min(backoffRef.current, 15000);
         reconnectTimeoutRef.current = setTimeout(() => {
@@ -117,12 +119,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     } catch {
       setIsConnected(false);
     }
-  }, []);
+  }, [claimedMemberId]);
 
-  // Connect on mount and load initial history
+  // Connect and load history only when claimed
   useEffect(() => {
-    loadHistory();
-    connectWebSocket();
+    if (claimedMemberId) {
+      loadHistory();
+      connectWebSocket();
+    } else {
+      setMessages([]);
+      setIsConnected(false);
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    }
 
     return () => {
       if (reconnectTimeoutRef.current) {
@@ -130,18 +141,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
       if (socketRef.current) {
         socketRef.current.close();
+        socketRef.current = null;
       }
     };
-  }, [loadHistory, connectWebSocket]);
-
-  // When claimed profile changes, cleanly reconnect WebSocket to sync identity
-  useEffect(() => {
-    if (socketRef.current) {
-      socketRef.current.close();
-      socketRef.current = null;
-    }
-    connectWebSocket();
-  }, [claimedMemberId, connectWebSocket]);
+  }, [claimedMemberId, loadHistory, connectWebSocket]);
 
   const sendMessage = async (content: string) => {
     const trimmed = content.trim();
