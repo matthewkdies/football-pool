@@ -1,5 +1,5 @@
 secrets:
-  flask_secret_key:
+  secret_key:
     file: ${SECRETS_DIR}/football_pool_local_flask_secret_key
   db_user:
     file: ${SECRETS_DIR}/football_pool_local_db_user
@@ -17,7 +17,7 @@ services:
     volumes:
       - ${GIT_REPOS_DIR}/football-pool:/workspace
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
 
@@ -49,7 +49,7 @@ services:
     volumes:
       - football-pool-localdb:/var/lib/postgresql/data:rw
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
     environment:

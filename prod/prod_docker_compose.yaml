@@ -1,6 +1,6 @@
 secrets:
-  flask_secret_key:
-    file: ../secrets/flask_secret_key.txt
+  secret_key:
+    file: ../secrets/secret_key.txt
   db_user:
     file: ../secrets/db_user.txt
   db_pass:
@@ -18,11 +18,11 @@ services:
       context: ..
       dockerfile: ./prod/prod.dockerfile
       secrets:
-        - flask_secret_key
+        - secret_key
         - db_user
         - db_pass
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
 
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data:rw
     secrets:
-      - flask_secret_key
+      - secret_key
       - db_user
       - db_pass
     environment:
