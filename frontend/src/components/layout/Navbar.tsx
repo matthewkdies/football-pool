@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import {
   Menu,
+  X,
   MessageSquare,
   UserCheck,
   LogOut,
@@ -20,6 +21,16 @@ export function Navbar() {
   const { toggleChat, unreadCount } = useChat();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const navLinks = [
     { to: '/', label: 'Live Scores', icon: Activity },
     { to: '/results', label: 'Standings & Results', icon: Trophy },
@@ -33,36 +44,48 @@ export function Navbar() {
         {/* Left: Mobile hamburger & Brand */}
         <div className="navbar-start flex items-center gap-2">
           {/* Mobile hamburger */}
-          <div className="dropdown lg:hidden">
+          <div className="relative lg:hidden">
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="btn btn-ghost btn-circle btn-sm"
-              aria-label="Toggle menu"
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
             >
-              <Menu className="h-5 w-5" />
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
+
             {isMobileMenuOpen && (
-              <ul
-                tabIndex={0}
-                className="menu dropdown-content mt-3 z-50 p-2 shadow-xl bg-base-200 rounded-box w-60 border border-base-content/10"
-              >
-                {navLinks.map(({ to, label, icon: Icon }) => (
-                  <li key={to}>
-                    <NavLink
-                      to={to}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 py-2.5 ${
-                          isActive ? 'active font-bold bg-primary text-primary-content' : ''
-                        }`
-                      }
-                    >
-                      <Icon className="h-4 w-4" />
-                      {label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
+              <>
+                {/* Backdrop overlay to close on tap outside */}
+                <div
+                  className="fixed inset-0 z-40 bg-black/20 backdrop-blur-xs"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  aria-hidden="true"
+                />
+
+                {/* Mobile Navigation Popover */}
+                <div className="absolute left-0 top-full mt-2 z-50 p-2 shadow-2xl bg-base-200 rounded-2xl w-60 border border-base-content/10">
+                  <ul className="menu menu-vertical p-0 gap-1">
+                    {navLinks.map(({ to, label, icon: Icon }) => (
+                      <li key={to}>
+                        <NavLink
+                          to={to}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={({ isActive }) =>
+                            `flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium ${
+                              isActive ? 'active font-bold bg-primary text-primary-content' : 'hover:bg-base-300'
+                            }`
+                          }
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span>{label}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
             )}
           </div>
 
