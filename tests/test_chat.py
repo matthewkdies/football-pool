@@ -133,3 +133,41 @@ def test_chat_history_rest_endpoint(chat_app_and_db):
     assert len(history) >= 2
     assert history[0]["content"] == "Message 1"
     assert history[1]["content"] == "Message 2"
+
+
+def test_post_chat_message_unauthenticated(chat_app_and_db):
+    app, _ = chat_app_and_db
+    client = TestClient(app)
+
+    response = client.post("/api/chat/messages", json={"content": "Hello unauthenticated"})
+    assert response.status_code == 401
+    assert "claim" in response.json()["detail"].lower()
+
+
+def test_post_chat_message_authenticated_and_moderated(chat_app_and_db):
+    app, session_factory = chat_app_and_db
+    client = TestClient(app)
+
+    token = create_session_token(member_id=1)
+    client.cookies.set(settings.session_cookie_name, token)
+
+    response = client.post(
+        "/api/chat/messages",
+        json={"content": "Holy shit that was a great play!"},
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["member_id"] == 1
+    assert data["author_name"] == "Matt Dies"
+    assert "****" in data["content"]
+    assert "shit" not in data["content"].lower()
+
+    # Verify persisted in database
+    import asyncio
+    async def verify_persisted():
+        async with session_factory() as session:
+            result = await session.execute(select(ChatMessage).where(ChatMessage.id == data["id"]))
+            msg = result.scalar_one_or_none()
+            assert msg is not None
+            assert "****" in msg.content
+    asyncio.run(verify_persisted())
