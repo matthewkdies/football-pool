@@ -19,6 +19,7 @@ from .api.scoreboard import router as scoreboard_router
 from .config import settings
 from .database import engine
 from .services.poller import scoreboard_polling_loop
+from .services.scheduler import tuesday_scoring_loop
 from .services.scoreboard import scoreboard_cache
 
 logger = logging.getLogger(__name__)
@@ -37,19 +38,21 @@ async def lifespan(app: FastAPI):
             "Please set APP_SECRET_KEY or provide /run/secrets/secret_key."
         )
 
-    # Start adaptive ESPN poller task in background
+    # Start background tasks
     stop_event = asyncio.Event()
     poller_task = asyncio.create_task(scoreboard_polling_loop(cache=scoreboard_cache, stop_event=stop_event))
+    scheduler_task = asyncio.create_task(tuesday_scoring_loop(stop_event=stop_event))
 
     yield
 
     logger.info("Shutting down Football Pool backend...")
     stop_event.set()
     scoreboard_cache.trigger_refresh()  # unblock poller wait if sleeping
-    try:
-        await asyncio.wait_for(poller_task, timeout=5.0)
-    except (asyncio.TimeoutError, asyncio.CancelledError):
-        poller_task.cancel()
+    for task in (poller_task, scheduler_task):
+        try:
+            await asyncio.wait_for(task, timeout=5.0)
+        except (asyncio.TimeoutError, asyncio.CancelledError):
+            task.cancel()
 
     await engine.dispose()
     logger.info("Backend shutdown complete.")
