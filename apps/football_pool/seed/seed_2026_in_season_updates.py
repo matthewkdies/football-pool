@@ -36,8 +36,15 @@ async def seed_database(session: AsyncSession) -> None:
     # 2.3: Remove Aunt Janet's assignment
     result = await session.execute(select(Member).where(Member.first_name == "Janet", Member.last_name == "Lippincott"))
     aunt_janet = result.scalar_one()
-    assignment = SeasonAssignment(season_year=2026, member_id=aunt_janet.id, team_id=carolina_panthers.id)
-    await session.delete(assignment)
+    result = await session.execute(
+        select(SeasonAssignment).where(
+            SeasonAssignment.season_year == 2026,
+            SeasonAssignment.member_id == aunt_janet.id,
+            SeasonAssignment.team_id == carolina_panthers.id,
+        )
+    )
+    janet_assignment = result.scalar_one()
+    await session.delete(janet_assignment)
     await session.flush()
 
     try:
